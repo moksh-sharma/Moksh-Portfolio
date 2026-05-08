@@ -21,7 +21,7 @@ export const WORKS: PortfolioWork[] = [
     id: 'college-recommendation',
     title: 'College Recommendation System',
     description:
-      'An intelligent college recommendation system that helps students discover top engineering colleges based on key preferences. Combines clean UI with smart logic to display college info, JEE cutoffs, and more — all in interactive popups. The experience is tuned for quick exploration: filter and scan options without losing context, read key stats side by side, and drill into details only when you need them. Built with semantic HTML, CSS, and JavaScript and designed in Figma before implementation, then deployed on Netlify for a fast, shareable live demo.',
+      'An intelligent college recommendation system that helps students discover top engineering colleges based on key preferences. Combines clean UI with smart logic to display college info, JEE cutoffs, and more - all in interactive popups. The experience is tuned for quick exploration: filter and scan options without losing context, read key stats side by side, and drill into details only when you need them. Built with semantic HTML, CSS, and JavaScript and designed in Figma before implementation, then deployed on Netlify for a fast, shareable live demo.',
     tags: ['HTML', 'CSS', 'JavaScript', 'Figma'],
     primaryLabel: 'Live Demo',
     primaryHref: 'https://collegerecommenderapp.netlify.app/',
@@ -30,7 +30,7 @@ export const WORKS: PortfolioWork[] = [
     id: 'employee-management',
     title: 'Employee Management System',
     description:
-      'A robust Employee Management System that simplifies tracking, organizing, and managing employee data and performance. Includes modules for attendance, payroll, roles, and performance evaluation in a streamlined dashboard. Object-oriented Java keeps domain models clear — employees, departments, and records stay consistent as you add features. The project focuses on reliable CRUD flows, validation, and readable console or UI-driven workflows so admins can onboard staff, log attendance patterns, and review performance notes without clutter.',
+      'A robust Employee Management System that simplifies tracking, organizing, and managing employee data and performance. Includes modules for attendance, payroll, roles, and performance evaluation in a streamlined dashboard. Object-oriented Java keeps domain models clear - employees, departments, and records stay consistent as you add features. The project focuses on reliable CRUD flows, validation, and readable console or UI-driven workflows so admins can onboard staff, log attendance patterns, and review performance notes without clutter.',
     tags: ['JAVA'],
     primaryLabel: 'GitHub',
     primaryHref: 'https://github.com/moksh-sharma/EMS',
@@ -57,7 +57,7 @@ export const WORKS: PortfolioWork[] = [
     id: 'ice-cream-shop',
     title: 'Ice-Cream Shop',
     description:
-      'A highly interactive ice-cream shopping site built with React for stateful menus, cart-style selections, and instant UI updates as users browse flavors and combos. Custom styling and layout in HTML and CSS support playful branding while keeping controls obvious — quantity tweaks, category browsing, and highlights for featured items. Designed in Figma first, then implemented with attention to hover states, transitions, and touch-friendly targets so the experience feels as satisfying on a phone as on desktop.',
+      'A highly interactive ice-cream shopping site built with React for stateful menus, cart-style selections, and instant UI updates as users browse flavors and combos. Custom styling and layout in HTML and CSS support playful branding while keeping controls obvious - quantity tweaks, category browsing, and highlights for featured items. Designed in Figma first, then implemented with attention to hover states, transitions, and touch-friendly targets so the experience feels as satisfying on a phone as on desktop.',
     tags: ['React.JS', 'HTML', 'CSS', 'JavaScript', 'Figma'],
     primaryLabel: 'GitHub',
     primaryHref: 'https://github.com/moksh-sharma/Ice-Cream',
@@ -66,7 +66,7 @@ export const WORKS: PortfolioWork[] = [
     id: 'sustainable-living',
     title: 'Sustainable-Living-Guide',
     description:
-      'A practical guide promoting eco-friendly habits and sustainable lifestyle choices for a greener future. Covers tips on energy conservation, waste reduction, ethical consumption, and sustainable living practices. React helps organize content into scannable sections and reusable cards so readers can jump between topics — home energy, food choices, travel, and daily habits — without losing their place. The interface pairs clear headings and short actionable copy with calm visuals from the Figma system, making education feel approachable rather than preachy.',
+      'A practical guide promoting eco-friendly habits and sustainable lifestyle choices for a greener future. Covers tips on energy conservation, waste reduction, ethical consumption, and sustainable living practices. React helps organize content into scannable sections and reusable cards so readers can jump between topics - home energy, food choices, travel, and daily habits - without losing their place. The interface pairs clear headings and short actionable copy with calm visuals from the Figma system, making education feel approachable rather than preachy.',
     tags: ['React.JS', 'HTML', 'CSS', 'JavaScript', 'Figma'],
     primaryLabel: 'GitHub',
     primaryHref: 'https://github.com/moksh-sharma/Sustainable-Living-Guide',

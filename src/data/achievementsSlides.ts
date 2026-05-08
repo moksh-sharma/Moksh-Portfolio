@@ -1,4 +1,4 @@
-/** Deloitte / Forage — completion certificate (same for card + button). */
+/** Deloitte / Forage - completion certificate (same for card + button). */
 export const DELOITTE_CERTIFICATE_URL =
   'https://forage-uploads-prod.s3.amazonaws.com/completion-certificates/9PBTqmSxAf6zZTseP/io9DzWKe3PTsiS6GG_9PBTqmSxAf6zZTseP_5nNToHjpNFu4gLx4T_1751186944085_completion_certificate.pdf'
 

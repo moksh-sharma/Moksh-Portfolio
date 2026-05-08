@@ -143,7 +143,7 @@ const socialIconVariants = {
   },
 }
 
-/** Lenis time-based scroll easing (0–1 → 0–1), used for in-page anchor navigation. */
+/** Lenis time-based scroll easing (0-1 → 0-1), used for in-page anchor navigation. */
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3
 
 export function Overlay() {
@@ -204,7 +204,7 @@ export function Overlay() {
   return (
     <div className="flex w-full max-w-[100vw] flex-col items-center overflow-x-hidden text-white font-sans pointer-events-none">
 
-      {/* Fixed Nav (tablet/desktop only — hidden on mobile) */}
+      {/* Fixed Nav (tablet/desktop only - hidden on mobile) */}
       <nav
         className={`pointer-events-auto fixed left-0 top-0 z-50 hidden w-full pt-[max(0px,env(safe-area-inset-top))] transition-all duration-300 md:block ${scrolled ? 'border-b border-white/10 bg-black/50 py-3 backdrop-blur-md md:py-4' : 'bg-transparent py-4 md:py-6'}`}
       >
@@ -463,7 +463,7 @@ export function Overlay() {
                             B.Tech, Computer Science Engineering
                           </h4>
                           <p className="mt-1 text-xs leading-snug text-indigo-400 sm:text-sm">
-                            Bennett University, Times Group, Greater Noida • Aug 2023 – Aug 2027
+                            Bennett University, Times Group, Greater Noida • Aug 2023 - Aug 2027
                           </p>
                         </div>
                       </div>
@@ -474,7 +474,7 @@ export function Overlay() {
                         <div className="min-w-0 flex-1">
                           <h4 className="text-balance text-lg font-bold text-white sm:text-xl">Class XII & Class X, CBSE</h4>
                           <p className="mt-1 text-xs leading-snug text-neutral-500 sm:text-sm">
-                            DAV Public School, Sector 49, Gurgaon • Apr 2010 – Apr 2023
+                            DAV Public School, Sector 49, Gurgaon • Apr 2010 - Apr 2023
                           </p>
                         </div>
                       </div>

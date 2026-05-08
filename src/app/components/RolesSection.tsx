@@ -106,7 +106,7 @@ export function RolesSection() {
         </p>
       </motion.div>
 
-      {/* Desktop: alternating cards + center spine — grid prevents side columns from shrinking */}
+      {/* Desktop: alternating cards + center spine - grid prevents side columns from shrinking */}
       <div className="relative mx-auto hidden w-full max-w-6xl md:block">
         <div
           className="absolute bottom-0 left-1/2 top-0 w-px -translate-x-1/2"

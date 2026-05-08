@@ -13,7 +13,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'Data Analyst Intern',
     company: 'Cache Digitech Pvt. Ltd.',
     location: 'New Delhi',
-    period: 'Jan 2026 – Present',
+    period: 'Jan 2026 - Present',
     bullets: [
       'Worked across Data Analysis, Full Stack Development, and Generative AI to design and build scalable business solutions, contributing to platforms like TechBank.Ai, Email Intelligence, and Cache CRM.',
       'Developed and optimized AI-driven workflows including resume parsing, email ingestion, and intelligent data processing using FastAPI, PostgreSQL, Microsoft Graph API, and LLM integrations (Ollama/OpenAI).',
@@ -25,7 +25,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'Web Development Intern',
     company: 'VGI Sooprs Technology',
     location: 'Gurgaon',
-    period: 'Jul 2025 – Jul 2025',
+    period: 'Jul 2025 - Jul 2025',
     bullets: [
       'Developed 3+ responsive landing pages using modern frontend technologies, ensuring smooth UI behavior across devices.',
       'Implemented UI/UX designs into functional interfaces using 5+ tools, improving layout consistency and visual structure.',
@@ -37,7 +37,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'Data Science Intern',
     company: 'Easy Data Analytics Technology',
     location: 'Noida',
-    period: 'Jun 2025 – Jul 2025',
+    period: 'Jun 2025 - Jul 2025',
     bullets: [
       'Built a universal binary classification system using 5+ machine learning technologies, enabling customizable business use-cases.',
       'Applied data processing, feature engineering, and model evaluation techniques across multiple structured datasets and the ML pipeline.',
@@ -50,7 +50,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'IOT Developer Intern',
     company: 'Binary Global Limited',
     location: 'New Delhi',
-    period: 'May 2024 – Jul 2024',
+    period: 'May 2024 - Jul 2024',
     bullets: [
       'Developed and maintained IOT software applications using programming languages such as Java, Python, and frameworks such as Spring and Django, leading to enhanced system functionality and performance.',
       'Collaborated with cross-functional teams to implement efficient algorithms and data structures, optimizing application scalability.',

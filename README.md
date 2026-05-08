@@ -1,4 +1,4 @@
-# Portfolio Website — Moksh Sharma
+# Portfolio Website - Moksh Sharma
 
 A modern, interactive personal portfolio built with **React**, **Vite**, **Three.js** (via React Three Fiber), and **Tailwind CSS v4**. It features a **WebGL hero background** that reacts to scroll, **Lenis** smooth scrolling, **Framer Motion** UI transitions, and a **data-driven** layout for projects, experience, and roles.
 
@@ -8,12 +8,12 @@ A modern, interactive personal portfolio built with **React**, **Vite**, **Three
 
 Single-page portfolio highlighting:
 
-- **Professional experience** — expandable cards sourced from `src/data/experience.ts` (internships and current role).
-- **Projects & works** — eight featured projects with tags and GitHub / live links (`src/data/works.ts`).
-- **Leadership & roles** — alternating motion cards (`src/data/roles.ts`).
-- **About** — bio, skills grid, and education tabs.
-- **Contact** — GitHub, LinkedIn, WhatsApp, and email (`Overlay.tsx` constants).
-- **Résumé download** — PDF bundled with Vite (`src/assets/Moksh Resume.pdf`).
+- **Professional experience** - expandable cards sourced from `src/data/experience.ts` (internships and current role).
+- **Projects & works** - eight featured projects with tags and GitHub / live links (`src/data/works.ts`).
+- **Leadership & roles** - alternating motion cards (`src/data/roles.ts`).
+- **About** - bio, skills grid, and education tabs.
+- **Contact** - GitHub, LinkedIn, WhatsApp, and email (`Overlay.tsx` constants).
+- **Résumé download** - PDF bundled with Vite (`src/assets/Moksh Resume.pdf`).
 
 > **Note:** An `Achievements` carousel component exists (`src/app/components/Achievements.tsx` + `src/data/achievementsSlides.ts`) but is **not currently mounted** in the main overlay (placeholder comment in `Overlay.tsx`). Re-enable by importing and rendering `<Achievements />` where desired.
 
@@ -47,9 +47,9 @@ Single-page portfolio highlighting:
 
 | Path | Role |
 |------|------|
-| `src/data/works.ts` | `WORKS` — eight portfolio projects |
-| `src/data/experience.ts` | `EXPERIENCE_ENTRIES` — four positions |
-| `src/data/roles.ts` | `ROLES` — five leadership / society entries |
+| `src/data/works.ts` | `WORKS` - eight portfolio projects |
+| `src/data/experience.ts` | `EXPERIENCE_ENTRIES` - four positions |
+| `src/data/roles.ts` | `ROLES` - five leadership / society entries |
 | `src/data/achievementsSlides.ts` | Deloitte + certifications + tech stack slides (for optional Achievements UI) |
 
 ### Styles
@@ -80,7 +80,7 @@ Single-page portfolio highlighting:
 
 - **Scroll-driven** rotation and motion: reads `#portfolio-scroll` scroll ratio and lerps group transforms in `useFrame`.
 - **@react-three/drei**: `Float`, `Stars`, `Sparkles`, `PerspectiveCamera`, `Environment`.
-- **Geometries**: torus, torus knot, icosahedron, octahedron, sphere, ring — metallic / emissive materials, multiple lights.
+- **Geometries**: torus, torus knot, icosahedron, octahedron, sphere, ring - metallic / emissive materials, multiple lights.
 - **Scene comment** documents scroll bands aligned with sections (hero → contact).
 
 ### 3. Hero monogram (`HeroMonogram.tsx`)
@@ -113,13 +113,13 @@ Single-page portfolio highlighting:
 
 ## Website sections (DOM order)
 
-1. **Hero** (`#hero`) — intro copy, name, typewriter, bio, résumé + contact CTAs, monogram card, marquee.
-2. **About** (`#about`) — narrative + Skills / Education tabs.
-3. **Experience** (`#experience`) — from `EXPERIENCE_ENTRIES`.
-4. **Projects** (`#projects`) — from `WORKS`.
-5. **Roles** (`#roles`) — from `ROLES`.
-6. **Contact** (`#contact`) — headline + social links.
-7. **Footer** — copyright + compact monogram.
+1. **Hero** (`#hero`) - intro copy, name, typewriter, bio, résumé + contact CTAs, monogram card, marquee.
+2. **About** (`#about`) - narrative + Skills / Education tabs.
+3. **Experience** (`#experience`) - from `EXPERIENCE_ENTRIES`.
+4. **Projects** (`#projects`) - from `WORKS`.
+5. **Roles** (`#roles`) - from `ROLES`.
+6. **Contact** (`#contact`) - headline + social links.
+7. **Footer** - copyright + compact monogram.
 
 ---
 
@@ -128,7 +128,7 @@ Single-page portfolio highlighting:
 - **Background:** near-black (`#050505` / `#0a0a0a` accents in components).
 - **Accents:** indigo / cyan gradients (hero, CTAs, typewriter).
 - **Typography:** **Outfit** (Google Fonts, linked in `index.html`).
-- **Glass panels:** `bg-black/20`–`bg-black/40`, `backdrop-blur`, subtle `border-white/5`–`border-white/10`.
+- **Glass panels:** `bg-black/20`-`bg-black/40`, `backdrop-blur`, subtle `border-white/5`-`border-white/10`.
 - **Safe areas:** `env(safe-area-inset-*)` used on hero padding and scroll container where relevant.
 
 ---
@@ -204,7 +204,7 @@ No environment variables are required for the current codebase (`import.meta.env
 
 ## Performance & UX notes
 
-- **Large JS bundle:** main chunk includes Three + motion; Vite may warn about chunk size — optional future work: lazy routes or dynamic `import()` for heavy sections.
+- **Large JS bundle:** main chunk includes Three + motion; Vite may warn about chunk size - optional future work: lazy routes or dynamic `import()` for heavy sections.
 - **WebGL:** requires a capable GPU/driver; canvas is mounted after hydration to avoid SSR issues (SPA only).
 - **Reduced motion:** respected in loader and some role cards; extend with `useReducedMotion` elsewhere if needed.
 - **SEO:** extend `index.html` with description, Open Graph, and JSON-LD as needed.
@@ -236,4 +236,4 @@ No environment variables are required for the current codebase (`import.meta.env
 
 Copyright © 2026 Moksh Sharma. All rights reserved.
 
-Built with care — React, Vite, and Three.js on the modern web.
+Built with care - React, Vite, and Three.js on the modern web.
