@@ -16,6 +16,9 @@ export default function App() {
       anchors: true,
       lerp: 0.085,
       smoothWheel: true,
+      syncTouch: true,
+      syncTouchLerp: 0.1,
+      touchInertiaMultiplier: 1.15,
     }),
     [],
   )
@@ -42,7 +45,7 @@ export default function App() {
       {/* Scrollable overlay: Lenis wrapper + content (Scene reads #portfolio-scroll) */}
       <ReactLenis
         id="portfolio-scroll"
-        className="relative z-10 h-full w-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-[max(0px,env(safe-area-inset-bottom))]"
+        className="relative z-10 h-full w-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain [-webkit-overflow-scrolling:touch] pb-[max(0px,env(safe-area-inset-bottom))]"
         options={lenisOptions}
       >
         <ErrorBoundary name="Overlay">

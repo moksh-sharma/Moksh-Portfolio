@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Float, Stars, Sparkles, PerspectiveCamera, Environment } from '@react-three/drei'
+import { Float, Stars, PerspectiveCamera, Environment } from '@react-three/drei'
 import * as THREE from 'three'
 import React from 'react'
 
@@ -17,6 +17,74 @@ const TorusKnotGeometry = (props: any) => React.createElement('torusKnotGeometry
 const IcosahedronGeometry = (props: any) => React.createElement('icosahedronGeometry', props)
 const OctahedronGeometry = (props: any) => React.createElement('octahedronGeometry', props)
 const SphereGeometry = (props: any) => React.createElement('sphereGeometry', props)
+
+const RISING_DOT_COUNT = 240
+const RISING_Y_MIN = -17
+const RISING_Y_MAX = 17
+
+/** Soft random dots drifting slowly upward with seamless wrap (replaces static Sparkles drift). */
+function RisingBackgroundDots() {
+  const pointsRef = useRef<THREE.Points>(null)
+  const reduceMotionRef = useRef(false)
+
+  const { positions, speeds } = useMemo(() => {
+    const positions = new Float32Array(RISING_DOT_COUNT * 3)
+    const speeds = new Float32Array(RISING_DOT_COUNT)
+    for (let i = 0; i < RISING_DOT_COUNT; i++) {
+      const i3 = i * 3
+      positions[i3] = THREE.MathUtils.randFloatSpread(24)
+      positions[i3 + 1] = THREE.MathUtils.randFloat(RISING_Y_MIN, RISING_Y_MAX)
+      positions[i3 + 2] = THREE.MathUtils.randFloatSpread(12) - 2
+      speeds[i] = THREE.MathUtils.randFloat(0.035, 0.078)
+    }
+    return { positions, speeds }
+  }, [])
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
+    reduceMotionRef.current = mq.matches
+    const onChange = () => {
+      reduceMotionRef.current = mq.matches
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  }, [])
+
+  useFrame((_, delta) => {
+    const pts = pointsRef.current
+    if (!pts || reduceMotionRef.current) return
+    const posAttr = pts.geometry.attributes.position
+    const posArr = posAttr.array as Float32Array
+
+    for (let i = 0; i < RISING_DOT_COUNT; i++) {
+      const yi = i * 3 + 1
+      posArr[yi] += delta * speeds[i]
+      if (posArr[yi] > RISING_Y_MAX) {
+        posArr[yi] = RISING_Y_MIN + Math.random() * 2.5
+        const xi = i * 3
+        posArr[xi] = THREE.MathUtils.randFloatSpread(24)
+      }
+    }
+    posAttr.needsUpdate = true
+  })
+
+  return (
+    <points ref={pointsRef} frustumCulled={false}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        color="#a5b4fc"
+        size={0.06}
+        transparent
+        opacity={0.4}
+        depthWrite={false}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  )
+}
 
 export function Scene() {
   const groupRef = useRef<THREE.Group>(null)
@@ -129,7 +197,7 @@ export function Scene() {
       {/* Environment Background */}
       <Environment preset="city" />
       <Stars radius={100} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-      <Sparkles count={150} scale={20} size={1.5} speed={0.4} opacity={0.4} color="#a5b4fc" />
+      <RisingBackgroundDots />
 
       {/* Floating background elements responding to scroll */}
       <Float speed={1} floatIntensity={2}>

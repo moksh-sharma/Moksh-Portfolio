@@ -1,6 +1,7 @@
 import { Github, Linkedin, Mail, ExternalLink, ChevronDown, GraduationCap, Code } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useLenis } from 'lenis/react'
+import { DepthTilt } from './DepthTilt'
 import { HeroMonogram } from './HeroMonogram'
 import { Experience } from './Experience'
 import { RolesSection } from './RolesSection'
@@ -78,11 +79,76 @@ const TECH_BELT_ITEMS = [
 
 const TECH_BELT_MARQUEE = `${TECH_BELT_ITEMS.join(' • ')} • `
 
+const heroContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.14, delayChildren: 0.06, when: 'beforeChildren' as const },
+  },
+}
+
+const heroInnerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.09, delayChildren: 0.04 },
+  },
+}
+
+const heroItemVariants = {
+  hidden: { opacity: 0, y: 36 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.78, ease: [0.22, 1, 0.36, 1] as const },
+  },
+}
+
+const skillGridVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.06 } },
+}
+
+const skillChipVariants = {
+  hidden: { opacity: 0, y: 14, scale: 0.94 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const },
+  },
+}
+
+const sectionTitleVariants = {
+  hidden: { opacity: 0, y: 28, rotateX: -10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1] as const },
+  },
+}
+
+const socialRowVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
+}
+
+const socialIconVariants = {
+  hidden: { opacity: 0, scale: 0.5, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { type: 'spring' as const, stiffness: 380, damping: 24 },
+  },
+}
+
 /** Lenis time-based scroll easing (0–1 → 0–1), used for in-page anchor navigation. */
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3
 
 export function Overlay() {
   const lenis = useLenis()
+  const prefersReducedMotion = useReducedMotion()
   const [activeTab, setActiveTab] = useState('Skills')
   const [scrolled, setScrolled] = useState(false)
   const [openWorkId, setOpenWorkId] = useState<string | null>(null)
@@ -149,14 +215,17 @@ export function Overlay() {
 
           <div className="flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              <motion.a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-neutral-400 transition-colors hover:text-white"
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.96 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+                className="relative text-sm font-medium text-neutral-400 transition-colors hover:text-white after:absolute after:bottom-[-4px] after:left-1/2 after:h-px after:w-0 after:-translate-x-1/2 after:bg-indigo-400/90 after:transition-[width] after:duration-300 hover:after:w-3/5"
               >
                 {link.name}
-              </a>
+              </motion.a>
             ))}
           </div>
         </div>
@@ -168,59 +237,113 @@ export function Overlay() {
         className="relative mx-auto flex min-h-dvh w-full max-w-7xl flex-col justify-start px-5 pb-[max(6.5rem,calc(env(safe-area-inset-bottom,0px)+5.5rem))] pt-[max(1.25rem,env(safe-area-inset-top,0px)+1rem)] sm:px-6 sm:pb-32 sm:pt-10 md:min-h-screen md:justify-center md:px-12 md:py-28 md:pb-32 md:pt-28 lg:px-24 lg:py-32"
       >
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-          className="z-10 pointer-events-auto flex w-full max-w-full flex-col items-center gap-8 text-center md:flex-row md:items-center md:gap-12 md:text-left"
+          variants={heroContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className="z-10 pointer-events-auto flex w-full max-w-full flex-col items-center gap-8 text-center md:[perspective:1400px] md:flex-row md:items-center md:gap-12 md:text-left"
         >
-          <div className="flex w-full min-w-0 max-w-lg flex-1 flex-col items-stretch px-0 sm:max-w-xl sm:items-center md:max-w-none md:items-start md:px-0">
-            <div className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-sm sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
-              <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-400 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base">
-                Hi, my name is
-              </p>
-              <h1 className="mb-3 text-center text-4xl font-bold uppercase leading-[1.06] tracking-tighter sm:mb-4 sm:text-5xl md:text-left md:text-7xl lg:text-8xl">
-                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">MOKSH</span>
-                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">{' '}SHARMA</span>
-              </h1>
-              <h2 className="mb-5 min-h-[48px] text-center text-2xl font-bold text-neutral-500 sm:mb-6 sm:min-h-[52px] sm:text-3xl md:min-h-[80px] md:text-left md:text-5xl lg:text-6xl">
-                <TypeAnimation
-                  sequence={[
-                    'Data Analysis', 2200,
-                    'Web Development', 2200,
-                  ]}
-                  wrapper="span"
-                  speed={50}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400"
-                  repeat={Infinity}
-                />
-              </h2>
-              <p className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-light leading-[1.65] text-neutral-400 sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl">
-                I build interactive 3D experiences, scalable web applications, and intuitive user interfaces that live on the modern web.
-              </p>
-              <div className="mx-auto flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center md:mx-0 md:max-w-none md:justify-start md:gap-6">
-                <a
-                  href={resumePdfUrl}
-                  download="Moksh-Sharma-Resume.pdf"
-                  className="min-h-[3rem] w-full touch-manipulation rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-black transition-all hover:bg-neutral-200 hover:shadow-[0_0_40px_rgba(255,255,255,0.2)] active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1 md:hover:shadow-[0_0_60px_rgba(255,255,255,0.4)]"
+          <motion.div
+            variants={heroItemVariants}
+            className="flex w-full min-w-0 max-w-lg flex-1 flex-col items-stretch px-0 sm:max-w-xl sm:items-center md:max-w-none md:items-start md:px-0"
+          >
+            <DepthTilt
+              tiltAmount={5}
+              className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-3 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78),0_0_0_1px_rgba(255,255,255,0.05),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-shadow duration-500 sm:p-4 md:rounded-3xl md:p-6 md:hover:shadow-[0_36px_100px_-32px_rgba(79,70,229,0.22),0_0_0_1px_rgba(255,255,255,0.08),inset_0_1px_0_0_rgba(255,255,255,0.08)] [&>*]:min-h-0 [&>*]:min-w-0"
+            >
+              <motion.div variants={heroInnerVariants} initial="hidden" animate="visible">
+                <motion.p
+                  variants={heroItemVariants}
+                  className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-400 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base"
                 >
-                  Download Resume
-                </a>
-                <a
-                  href="#contact"
-                  onClick={(e) => handleNavClick(e, '#contact')}
-                  className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/20 px-5 py-3 text-center text-sm font-semibold backdrop-blur-sm transition-all hover:bg-white/10 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1"
+                  Hi, my name is
+                </motion.p>
+                <motion.div variants={heroItemVariants} className="mb-3 sm:mb-4">
+                  <h1 className="text-center text-4xl font-bold uppercase leading-[1.06] tracking-tighter sm:text-5xl md:text-left md:text-7xl lg:text-8xl">
+                    <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">
+                      MOKSH
+                    </span>
+                    <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">
+                      {' '}SHARMA
+                    </span>
+                  </h1>
+                </motion.div>
+                <motion.h2
+                  variants={heroItemVariants}
+                  className="mb-5 min-h-[48px] text-center text-2xl font-bold text-neutral-500 sm:mb-6 sm:min-h-[52px] sm:text-3xl md:min-h-[80px] md:text-left md:text-5xl lg:text-6xl"
                 >
-                  Contact Me
-                </a>
-              </div>
-            </div>
-          </div>
+                  <TypeAnimation
+                    sequence={[
+                      'Data Analysis',
+                      2200,
+                      'Web Development',
+                      2200,
+                    ]}
+                    wrapper="span"
+                    speed={50}
+                    className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400"
+                    repeat={Infinity}
+                  />
+                </motion.h2>
+                <motion.p
+                  variants={heroItemVariants}
+                  className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-light leading-[1.65] text-neutral-400 sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl"
+                >
+                  I build interactive 3D experiences, scalable web applications, and intuitive user interfaces that live on the modern web.
+                </motion.p>
+                <motion.div
+                  variants={heroItemVariants}
+                  className="mx-auto flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center md:mx-0 md:max-w-none md:justify-start md:gap-6"
+                >
+                  <motion.a
+                    href={resumePdfUrl}
+                    download="Moksh-Sharma-Resume.pdf"
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+                    className="min-h-[3rem] w-full touch-manipulation rounded-full bg-white px-5 py-3 text-center text-sm font-semibold text-black shadow-[0_12px_40px_-16px_rgba(255,255,255,0.45)] transition-colors hover:bg-neutral-200 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:shadow-[0_18px_50px_-14px_rgba(255,255,255,0.35)]"
+                  >
+                    Download Resume
+                  </motion.a>
+                  <motion.a
+                    href="#contact"
+                    onClick={(e) => handleNavClick(e, '#contact')}
+                    whileHover={{ y: -3, scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ type: 'spring', stiffness: 420, damping: 22 }}
+                    className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/25 bg-white/[0.03] px-5 py-3 text-center text-sm font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] backdrop-blur-sm transition-colors hover:border-white/35 hover:bg-white/10 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base"
+                  >
+                    Contact Me
+                  </motion.a>
+                </motion.div>
+              </motion.div>
+            </DepthTilt>
+          </motion.div>
 
-          <div className="order-first flex w-full max-w-[min(100%,18rem)] shrink-0 items-center justify-center sm:max-w-sm md:order-last md:max-w-md md:flex-1">
-            <div className="relative grid aspect-square w-full max-w-full shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-sm sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
-              <HeroMonogram />
-            </div>
-          </div>
+          <motion.div
+            variants={heroItemVariants}
+            className="order-first flex w-full max-w-[min(100%,18rem)] shrink-0 items-center justify-center sm:max-w-sm md:order-last md:max-w-md md:flex-1"
+          >
+            <DepthTilt
+              tiltAmount={7}
+              className="relative grid aspect-square w-full max-w-full shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-3 shadow-[0_28px_80px_-36px_rgba(34,211,238,0.2),0_0_0_1px_rgba(255,255,255,0.06)] backdrop-blur-md transition-shadow duration-500 sm:p-4 md:rounded-3xl md:p-6 md:hover:shadow-[0_36px_100px_-40px_rgba(79,70,229,0.28),0_0_0_1px_rgba(255,255,255,0.08)] [&>*]:min-h-0 [&>*]:min-w-0"
+            >
+              <motion.div
+                className="relative col-start-1 row-start-1"
+                animate={
+                  prefersReducedMotion
+                    ? undefined
+                    : { y: [0, -6, 0] }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? undefined
+                    : { duration: 5.5, repeat: Infinity, ease: 'easeInOut' }
+                }
+              >
+                <HeroMonogram />
+              </motion.div>
+            </DepthTilt>
+          </motion.div>
         </motion.div>
 
         {/* Marquee Banner */}
@@ -251,93 +374,116 @@ export function Overlay() {
         className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center px-4 py-20 sm:px-6 sm:py-24 md:px-12 md:py-28 lg:px-24 lg:py-32"
       >
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 48 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-48px' }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="pointer-events-auto z-10 w-full rounded-2xl border border-white/5 bg-black/40 px-4 pb-5 pt-6 shadow-2xl backdrop-blur-md sm:rounded-3xl sm:px-8 sm:pt-8 md:px-12 md:pb-6 md:pt-10"
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-auto z-10 w-full md:[perspective:1600px]"
         >
-          <h2 className="mb-6 text-3xl font-bold tracking-tight text-white sm:mb-8 sm:text-4xl md:mb-10 md:text-6xl">
-            About Me.
-          </h2>
+          <DepthTilt
+            tiltAmount={4}
+            className="w-full rounded-2xl border border-white/10 bg-black/35 px-4 pb-5 pt-6 shadow-[0_28px_80px_-36px_rgba(0,0,0,0.65),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_0_rgba(255,255,255,0.05)] backdrop-blur-md transition-shadow duration-500 sm:rounded-3xl sm:px-8 sm:pt-8 md:px-12 md:pb-6 md:pt-10 md:hover:shadow-[0_40px_100px_-40px_rgba(79,70,229,0.16),0_0_0_1px_rgba(255,255,255,0.08)]"
+          >
+            <motion.h2
+              variants={sectionTitleVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-40px' }}
+              style={{ transformOrigin: '50% 0%' }}
+              className="mb-6 text-3xl font-bold tracking-tight text-white sm:mb-8 sm:text-4xl md:mb-10 md:text-6xl"
+            >
+              About Me.
+            </motion.h2>
 
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center md:gap-10">
-            <div className="flex-1 text-base font-light leading-relaxed text-neutral-300 sm:text-lg">
-              <p>
-                GenAI and Full Stack Developer with experience in building{' '}
-                <strong className="text-white font-medium">AI-powered applications</strong> and{' '}
-                <strong className="text-white font-medium">data-driven solutions</strong>. Currently developing scalable systems, focusing on automation, analytics, and intelligent workflows. Strong foundation in{' '}
-                <strong className="text-white font-medium">Python</strong>, <strong className="text-white font-medium">SQL</strong>, and modern web technologies, driven by a passion for solving real-world problems.
-              </p>
-            </div>
-
-            {/* Tabs */}
-            <div className="flex-1 w-full">
-              <div className="mb-6 flex border-b border-white/10">
-                {['Skills', 'Education'].map(tab => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-400' : 'text-neutral-500 hover:text-neutral-300'}`}
-                  >
-                    {tab}
-                    {activeTab === tab && (
-                      <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500" />
-                    )}
-                  </button>
-                ))}
+            <div className="flex flex-col gap-8 lg:flex-row lg:items-center md:gap-10">
+              <div className="flex-1 text-base font-light leading-relaxed text-neutral-300 sm:text-lg">
+                <p>
+                  GenAI and Full Stack Developer with experience in building{' '}
+                  <strong className="text-white font-medium">AI-powered applications</strong> and{' '}
+                  <strong className="text-white font-medium">data-driven solutions</strong>. Currently developing scalable systems, focusing on automation, analytics, and intelligent workflows. Strong foundation in{' '}
+                  <strong className="text-white font-medium">Python</strong>, <strong className="text-white font-medium">SQL</strong>, and modern web technologies, driven by a passion for solving real-world problems.
+                </p>
               </div>
 
-              <div>
-                {activeTab === 'Skills' && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="grid grid-cols-2 gap-2 text-xs font-medium sm:gap-4 sm:text-sm md:grid-cols-3"
-                  >
-                    {['Python', 'React.js', 'Next.js', 'FastAPI', 'Flask', 'SQL', 'Excel', 'Git', 'REST APIs'].map(skill => (
-                      <div
-                        key={skill}
-                        className="flex min-h-0 flex-col items-center justify-center gap-1 rounded-xl border border-white/5 bg-white/5 p-2 text-center sm:flex-row sm:items-center sm:justify-start sm:gap-2 sm:p-3 sm:text-left"
-                      >
-                        <Code className="size-3.5 shrink-0 text-indigo-400 sm:size-4" />
-                        <span className="max-w-full break-words leading-snug sm:min-w-0">{skill}</span>
+              {/* Tabs */}
+              <div className="flex-1 w-full">
+                <div className="mb-6 flex border-b border-white/10">
+                  {['Skills', 'Education'].map(tab => (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveTab(tab)}
+                      className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-400' : 'text-neutral-500 hover:text-neutral-300'}`}
+                    >
+                      {tab}
+                      {activeTab === tab && (
+                        <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-500" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <div>
+                  {activeTab === 'Skills' && (
+                    <motion.div
+                      key="skills-tab"
+                      variants={skillGridVariants}
+                      initial="hidden"
+                      animate="visible"
+                      className="grid grid-cols-2 gap-2 text-xs font-medium sm:gap-4 sm:text-sm md:grid-cols-3"
+                    >
+                      {['Python', 'React.js', 'Next.js', 'FastAPI', 'Flask', 'SQL', 'Excel', 'Git', 'REST APIs'].map(skill => (
+                        <motion.div
+                          key={skill}
+                          variants={skillChipVariants}
+                          whileHover={{ y: -5, scale: 1.02 }}
+                          transition={{ type: 'spring', stiffness: 380, damping: 22 }}
+                          className="flex min-h-0 flex-col items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/[0.06] p-2 text-center shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] sm:flex-row sm:items-center sm:justify-start sm:gap-2 sm:p-3 sm:text-left"
+                        >
+                          <Code className="size-3.5 shrink-0 text-indigo-400 sm:size-4" />
+                          <span className="max-w-full break-words leading-snug sm:min-w-0">{skill}</span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}
+                  {activeTab === 'Education' && (
+                    <motion.div
+                      key="education-tab"
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                      className="space-y-5 sm:space-y-6"
+                    >
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-400 sm:p-3">
+                          <GraduationCap className="size-5 sm:size-6" aria-hidden />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-balance text-lg font-bold text-white sm:text-xl">
+                            B.Tech, Computer Science Engineering
+                          </h4>
+                          <p className="mt-1 text-xs leading-snug text-indigo-400 sm:text-sm">
+                            Bennett University, Times Group, Greater Noida • Aug 2023 – Aug 2027
+                          </p>
+                        </div>
                       </div>
-                    ))}
-                  </motion.div>
-                )}
-                {activeTab === 'Education' && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5 sm:space-y-6">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-400 sm:p-3">
-                        <GraduationCap className="size-5 sm:size-6" aria-hidden />
+                      <div className="flex items-start gap-3 sm:gap-4">
+                        <div className="flex shrink-0 self-start rounded-xl bg-white/5 p-2.5 text-neutral-400 sm:p-3">
+                          <GraduationCap className="size-5 sm:size-6" aria-hidden />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h4 className="text-balance text-lg font-bold text-white sm:text-xl">Class XII & Class X, CBSE</h4>
+                          <p className="mt-1 text-xs leading-snug text-neutral-500 sm:text-sm">
+                            DAV Public School, Sector 49, Gurgaon • Apr 2010 – Apr 2023
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="text-balance text-lg font-bold text-white sm:text-xl">
-                          B.Tech, Computer Science Engineering
-                        </h4>
-                        <p className="mt-1 text-xs leading-snug text-indigo-400 sm:text-sm">
-                          Bennett University, Times Group, Greater Noida • Aug 2023 – Aug 2027
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-white/5 p-2.5 text-neutral-400 sm:p-3">
-                        <GraduationCap className="size-5 sm:size-6" aria-hidden />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="text-balance text-lg font-bold text-white sm:text-xl">Class XII & Class X, CBSE</h4>
-                        <p className="mt-1 text-xs leading-snug text-neutral-500 sm:text-sm">
-                          DAV Public School, Sector 49, Gurgaon • Apr 2010 – Apr 2023
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
+                    </motion.div>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          </DepthTilt>
         </motion.div>
       </section>
 
@@ -349,11 +495,12 @@ export function Overlay() {
         className="mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-center px-4 py-20 sm:px-6 sm:py-24 md:px-12 md:py-28 lg:px-24 lg:py-32"
       >
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="pointer-events-auto text-center"
+          variants={sectionTitleVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          style={{ transformOrigin: '50% 0%' }}
+          className="pointer-events-auto text-center md:[perspective:1400px]"
         >
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Latest Works</h2>
           <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-xl">
@@ -361,94 +508,100 @@ export function Overlay() {
           </p>
         </motion.div>
 
-        <div className="pointer-events-auto mx-auto flex w-full max-w-4xl flex-col gap-3 px-0 sm:gap-4">
+        <div className="pointer-events-auto mx-auto flex w-full max-w-4xl flex-col gap-3 px-0 sm:gap-4 md:[perspective:1600px]">
           {WORKS.map((work, i) => {
             const open = openWorkId === work.id
             return (
               <motion.div
                 key={work.id}
                 layout
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: i * 0.05, layout: { type: 'spring', bounce: 0.2, duration: 0.45 } }}
-                className={`rounded-xl border bg-[#0a0a0a]/80 shadow-xl backdrop-blur-xl transition-colors sm:rounded-2xl ${open ? 'border-indigo-500/40 bg-white/[0.04]' : 'border-white/10 hover:border-white/20'}`}
+                whileHover={prefersReducedMotion ? undefined : { y: -3 }}
+                className="min-w-0"
               >
-                <button
-                  type="button"
-                  aria-expanded={open}
-                  aria-controls={`work-panel-${work.id}`}
-                  onClick={() => setOpenWorkId(open ? null : work.id)}
-                  className="flex w-full touch-manipulation items-start justify-between gap-3 p-4 text-left sm:gap-4 sm:p-5 md:p-6"
+                <DepthTilt
+                  tiltAmount={5}
+                  className={`overflow-hidden rounded-xl border bg-[#0a0a0a]/82 shadow-[0_24px_60px_-32px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.05)] backdrop-blur-xl transition-[box-shadow,border-color] duration-300 sm:rounded-2xl ${open ? 'border-indigo-500/45 bg-white/[0.05] shadow-[0_28px_70px_-30px_rgba(79,70,229,0.25)]' : 'border-white/10 hover:border-white/22 hover:shadow-[0_28px_70px_-34px_rgba(34,211,238,0.12)]'}`}
                 >
-                  <div className="min-w-0 flex-1">
-                    <h3
-                      className={`text-balance tracking-tight transition-[font-size,font-weight,color] duration-300 ease-out ${open
-                        ? 'bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 bg-clip-text text-xl font-black text-transparent sm:text-2xl md:text-3xl lg:text-4xl'
-                        : 'text-lg font-bold text-white sm:text-xl md:text-2xl'
-                        }`}
-                    >
-                      {work.title}
-                    </h3>
-                    {!open && (
-                      <p className="mt-2 text-sm text-neutral-500 font-light">Click to view details</p>
-                    )}
-                  </div>
-                  <motion.span
-                    animate={{ rotate: open ? 180 : 0 }}
-                    transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-                    className={`inline-flex shrink-0 ${open ? 'text-indigo-400' : 'text-neutral-500'}`}
-                    aria-hidden
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-controls={`work-panel-${work.id}`}
+                    onClick={() => setOpenWorkId(open ? null : work.id)}
+                    className="flex w-full touch-manipulation items-start justify-between gap-3 p-4 text-left sm:gap-4 sm:p-5 md:p-6"
                   >
-                    <ChevronDown size={22} />
-                  </motion.span>
-                </button>
-                <div
-                  className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] motion-reduce:transition-none ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
-                >
-                  <div className="min-h-0">
-                    <motion.div
-                      id={`work-panel-${work.id}`}
-                      role="region"
-                      aria-hidden={!open}
-                      variants={workDetailContainerVariants}
-                      initial={false}
-                      animate={open ? 'visible' : 'hidden'}
-                      className={`border-t border-white/10 px-4 pb-5 pt-2 sm:px-5 sm:pb-6 md:px-6 ${open ? '' : 'pointer-events-none'}`}
-                    >
-                      <motion.p
-                        variants={workDetailItemVariants}
-                        className="text-[15px] font-light leading-relaxed text-neutral-300 sm:text-base"
+                    <div className="min-w-0 flex-1">
+                      <h3
+                        className={`text-balance tracking-tight transition-[font-size,font-weight,color] duration-300 ease-out ${open
+                          ? 'bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 bg-clip-text text-xl font-black text-transparent sm:text-2xl md:text-3xl lg:text-4xl'
+                          : 'text-lg font-bold text-white sm:text-xl md:text-2xl'
+                          }`}
                       >
-                        {work.description}
-                      </motion.p>
-                      <motion.div variants={workDetailTagRowVariants} className="mt-5 flex flex-wrap gap-2">
-                        {work.tags.map((tag, ti) => (
-                          <motion.span
-                            key={`${work.id}-tag-${ti}`}
-                            variants={workDetailItemVariants}
-                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-neutral-300"
-                          >
-                            {tag}
-                          </motion.span>
-                        ))}
-                      </motion.div>
-                      <motion.div variants={workDetailItemVariants} className="mt-6">
-                        <a
-                          href={work.primaryHref}
-                          target="_blank"
-                          rel="noreferrer"
-                          tabIndex={open ? undefined : -1}
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-200 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-100 sm:min-h-0 sm:px-5"
+                        {work.title}
+                      </h3>
+                      {!open && (
+                        <p className="mt-2 text-sm text-neutral-500 font-light">Click to view details</p>
+                      )}
+                    </div>
+                    <motion.span
+                      animate={{ rotate: open ? 180 : 0 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                      className={`inline-flex shrink-0 ${open ? 'text-indigo-400' : 'text-neutral-500'}`}
+                      aria-hidden
+                    >
+                      <ChevronDown size={22} />
+                    </motion.span>
+                  </button>
+                  <div
+                    className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] motion-reduce:transition-none ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                  >
+                    <div className="min-h-0">
+                      <motion.div
+                        id={`work-panel-${work.id}`}
+                        role="region"
+                        aria-hidden={!open}
+                        variants={workDetailContainerVariants}
+                        initial={false}
+                        animate={open ? 'visible' : 'hidden'}
+                        className={`border-t border-white/10 px-4 pb-5 pt-2 sm:px-5 sm:pb-6 md:px-6 ${open ? '' : 'pointer-events-none'}`}
+                      >
+                        <motion.p
+                          variants={workDetailItemVariants}
+                          className="text-[15px] font-light leading-relaxed text-neutral-300 sm:text-base"
                         >
-                          {work.primaryLabel === 'GitHub' ? <Github size={18} /> : <ExternalLink size={18} />}
-                          {work.primaryLabel}
-                        </a>
+                          {work.description}
+                        </motion.p>
+                        <motion.div variants={workDetailTagRowVariants} className="mt-5 flex flex-wrap gap-2">
+                          {work.tags.map((tag, ti) => (
+                            <motion.span
+                              key={`${work.id}-tag-${ti}`}
+                              variants={workDetailItemVariants}
+                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-neutral-300"
+                            >
+                              {tag}
+                            </motion.span>
+                          ))}
+                        </motion.div>
+                        <motion.div variants={workDetailItemVariants} className="mt-6">
+                          <a
+                            href={work.primaryHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            tabIndex={open ? undefined : -1}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-200 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-100 sm:min-h-0 sm:px-5"
+                          >
+                            {work.primaryLabel === 'GitHub' ? <Github size={18} /> : <ExternalLink size={18} />}
+                            {work.primaryLabel}
+                          </a>
+                        </motion.div>
                       </motion.div>
-                    </motion.div>
+                    </div>
                   </div>
-                </div>
+                </DepthTilt>
               </motion.div>
             )
           })}
@@ -465,69 +618,117 @@ export function Overlay() {
         className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col items-center justify-center px-4 py-20 text-center sm:px-6 sm:py-24 md:px-12 md:py-28 lg:px-24 lg:py-32"
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          initial={{ opacity: 0, y: 40, rotateX: 10, scale: 0.94 }}
+          whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="pointer-events-auto z-10 w-full max-w-4xl rounded-2xl border border-white/5 bg-black/30 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.5rem] sm:p-10 md:rounded-[3rem] md:p-16 lg:p-20"
+          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          style={{ transformOrigin: '50% 50%' }}
+          className="pointer-events-auto z-10 w-full max-w-4xl md:[perspective:1800px]"
         >
-          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-400 sm:mb-4 sm:text-xs">
-            GET IN TOUCH
-          </h2>
-          <h3 className="mb-6 bg-gradient-to-b from-white via-white to-neutral-500 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl">
-            Let&apos;s build <br className="hidden sm:block" /> together.
-          </h3>
-          <p className="mx-auto mb-10 max-w-2xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-2xl">
-            Currently open for new opportunities. Whether you have a project in mind or just want to say hello, my inbox is always open.
-          </p>
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-5 md:gap-8">
-            <a
-              href={CONTACT_GITHUB}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="GitHub"
-              className="group touch-manipulation rounded-full border border-white/10 bg-white/5 p-4 text-white transition-all duration-300 hover:border-indigo-500/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(79,70,229,0.3)] active:scale-95 sm:p-5 md:p-6 md:hover:-translate-y-2"
+          <DepthTilt
+            tiltAmount={5}
+            className="rounded-2xl border border-white/10 bg-black/[0.42] p-6 shadow-[0_32px_100px_-40px_rgba(79,70,229,0.28),0_0_0_1px_rgba(255,255,255,0.06),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-shadow duration-500 sm:rounded-[2.5rem] sm:p-10 md:rounded-[3rem] md:p-16 md:hover:shadow-[0_40px_120px_-48px_rgba(34,211,238,0.2),0_0_0_1px_rgba(255,255,255,0.08)] lg:p-20"
+          >
+            <motion.h2
+              initial={{ opacity: 0, y: -8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05, duration: 0.45 }}
+              className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-400 sm:mb-4 sm:text-xs"
             >
-              <Github className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
-            </a>
-            <a
-              href={CONTACT_LINKEDIN}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="LinkedIn"
-              className="group touch-manipulation rounded-full border border-white/10 bg-white/5 p-4 text-white transition-all duration-300 hover:border-cyan-500/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(6,182,212,0.3)] active:scale-95 sm:p-5 md:p-6 md:hover:-translate-y-2"
+              GET IN TOUCH
+            </motion.h2>
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.12, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-6 bg-gradient-to-b from-white via-white to-neutral-500 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl"
             >
-              <Linkedin className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
-            </a>
-            <a
-              href={WHATSAPP_HREF}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="WhatsApp"
-              className="group touch-manipulation rounded-full border border-white/10 bg-white/5 p-4 text-white transition-all duration-300 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(16,185,129,0.25)] active:scale-95 sm:p-5 md:p-6 md:hover:-translate-y-2"
+              Let&apos;s build <br className="hidden sm:block" /> together.
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mx-auto mb-10 max-w-2xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-2xl"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-7"
-                fill="currentColor"
-                aria-hidden
+              Currently open for new opportunities. Whether you have a project in mind or just want to say hello, my inbox is always open.
+            </motion.p>
+            <motion.div
+              variants={socialRowVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.4 }}
+              className="flex flex-wrap justify-center gap-3 sm:gap-5 md:gap-8"
+            >
+              <motion.a
+                variants={socialIconVariants}
+                href={CONTACT_GITHUB}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="GitHub"
+                whileHover={{ y: -6, scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+                className="group touch-manipulation rounded-full border border-white/12 bg-white/[0.06] p-4 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-colors duration-300 hover:border-indigo-500/55 hover:bg-white/10 hover:shadow-[0_0_36px_rgba(79,70,229,0.35)] sm:p-5 md:p-6"
               >
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-              </svg>
-            </a>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              aria-label="Email"
-              className="group touch-manipulation rounded-full border border-white/10 bg-white/5 p-4 text-white transition-all duration-300 hover:border-white/50 hover:bg-white/10 hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] active:scale-95 sm:p-5 md:p-6 md:hover:-translate-y-2"
-            >
-              <Mail className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
-            </a>
-          </div>
+                <Github className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
+              </motion.a>
+              <motion.a
+                variants={socialIconVariants}
+                href={CONTACT_LINKEDIN}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn"
+                whileHover={{ y: -6, scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+                className="group touch-manipulation rounded-full border border-white/12 bg-white/[0.06] p-4 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-colors duration-300 hover:border-cyan-500/55 hover:bg-white/10 hover:shadow-[0_0_36px_rgba(6,182,212,0.35)] sm:p-5 md:p-6"
+              >
+                <Linkedin className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
+              </motion.a>
+              <motion.a
+                variants={socialIconVariants}
+                href={WHATSAPP_HREF}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="WhatsApp"
+                whileHover={{ y: -6, scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+                className="group touch-manipulation rounded-full border border-white/12 bg-white/[0.06] p-4 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-colors duration-300 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_0_36px_rgba(16,185,129,0.3)] sm:p-5 md:p-6"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-7"
+                  fill="currentColor"
+                  aria-hidden
+                >
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </motion.a>
+              <motion.a
+                variants={socialIconVariants}
+                href={`mailto:${CONTACT_EMAIL}`}
+                aria-label="Email"
+                whileHover={{ y: -6, scale: 1.06 }}
+                whileTap={{ scale: 0.94 }}
+                className="group touch-manipulation rounded-full border border-white/12 bg-white/[0.06] p-4 text-white shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-colors duration-300 hover:border-white/45 hover:bg-white/10 hover:shadow-[0_0_36px_rgba(255,255,255,0.18)] sm:p-5 md:p-6"
+              >
+                <Mail className="size-6 transition-transform group-hover:scale-110 sm:size-7 md:size-[28px]" />
+              </motion.a>
+            </motion.div>
+          </DepthTilt>
         </motion.div>
       </section>
 
       {/* Footer */}
-      <footer className="w-full py-5 border-t border-white/5 bg-black/50 backdrop-blur-md pointer-events-auto">
+      <motion.footer
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="pointer-events-auto w-full border-t border-white/5 bg-black/50 py-5 backdrop-blur-md"
+      >
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-xs font-light tracking-wide text-neutral-600 sm:flex-row sm:gap-6 sm:px-6 sm:text-sm md:px-12">
           <p className="text-center md:text-left order-2 md:order-1">
             Made with ❤️ © {new Date().getFullYear()} {LEGAL_NAME}.
@@ -536,7 +737,7 @@ export function Overlay() {
             <HeroMonogram compact />
           </div>
         </div>
-      </footer>
+      </motion.footer>
 
       <style>{`
         @keyframes marquee {
