@@ -1,12 +1,19 @@
 import { useRef, useEffect, useCallback, type VideoHTMLAttributes } from 'react'
 import { useLenis } from 'lenis/react'
 import { useScrollVideo } from '../context/ScrollVideoContext'
+import { DESKTOP_VIDEO_FPS, MOBILE_VIDEO_FPS } from '../hooks/useDeviceScrollProfile'
 
 const VIDEO_SRC = `${import.meta.env.BASE_URL}videos/background-scroll.mp4`
-const VIDEO_FPS = 60000 / 1001
 const WARMUP_STEPS = 8
 const INIT_TIMEOUT_MS = 12000
 const WARMUP_FRAME_BUDGET_MS = 3500
+
+function detectVideoFps() {
+  if (typeof window === 'undefined') return DESKTOP_VIDEO_FPS
+  const isMobile =
+    window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 768
+  return isMobile ? MOBILE_VIDEO_FPS : DESKTOP_VIDEO_FPS
+}
 
 function isTimeSeekable(video: HTMLVideoElement, time: number): boolean {
   const ranges = video.seekable
@@ -55,11 +62,11 @@ function readScrollMetrics() {
   return { progress, ready: true }
 }
 
-function progressToFrameTime(progress: number, duration: number): number {
+function progressToFrameTime(progress: number, duration: number, fps: number): number {
   const clamped = Math.min(1, Math.max(0, progress))
-  const totalFrames = Math.max(1, Math.round(duration * VIDEO_FPS))
+  const totalFrames = Math.max(1, Math.round(duration * fps))
   const frameIndex = Math.min(totalFrames - 1, Math.floor(clamped * (totalFrames - 1)))
-  return frameIndex / VIDEO_FPS
+  return frameIndex / fps
 }
 
 async function fetchVideoBlob(
@@ -104,15 +111,17 @@ export function ScrollVideoBackground() {
   const readyRef = useRef(false)
   const syncQueuedRef = useRef(false)
   const objectUrlRef = useRef<string | null>(null)
+  const videoFpsRef = useRef(detectVideoFps())
   const lenis = useLenis()
 
   const applyFrameForProgress = useCallback((progress: number) => {
     const video = videoRef.current
     const duration = durationRef.current
+    const fps = videoFpsRef.current
     if (!video || duration <= 0 || !readyRef.current) return
 
-    const targetTime = progressToFrameTime(progress, duration)
-    const targetFrame = Math.round(targetTime * VIDEO_FPS)
+    const targetTime = progressToFrameTime(progress, duration, fps)
+    const targetFrame = Math.round(targetTime * fps)
 
     if (targetFrame === lastFrameRef.current) return
     if (!isTimeSeekable(video, targetTime)) return
@@ -182,13 +191,14 @@ export function ScrollVideoBackground() {
       }
 
       durationRef.current = duration
+      const fps = videoFpsRef.current
       const deadline = performance.now() + WARMUP_FRAME_BUDGET_MS
 
       for (let i = 0; i <= WARMUP_STEPS; i++) {
         if (cancelled || finished) return
         if (performance.now() >= deadline) break
 
-        const t = progressToFrameTime(i / WARMUP_STEPS, duration)
+        const t = progressToFrameTime(i / WARMUP_STEPS, duration, fps)
         seekToTime(video, t)
         await waitForSeek(video)
         setProgress(88 + (i / WARMUP_STEPS) * 10)
@@ -284,6 +294,47 @@ export function ScrollVideoBackground() {
 
   useEffect(() => {
     const root = document.getElementById('portfolio-scroll')
+    if (!root) return
+
+    let touchActive = false
+    let touchRaf = 0
+
+    const touchLoop = () => {
+      syncVideoToScroll()
+      if (touchActive) touchRaf = requestAnimationFrame(touchLoop)
+    }
+
+    const onTouchStart = () => {
+      touchActive = true
+      if (!touchRaf) touchRaf = requestAnimationFrame(touchLoop)
+    }
+
+    const onTouchEnd = () => {
+      touchActive = false
+      if (touchRaf) cancelAnimationFrame(touchRaf)
+      touchRaf = 0
+      queueSync()
+    }
+
+    const onScroll = () => queueSync()
+
+    root.addEventListener('touchstart', onTouchStart, { passive: true })
+    root.addEventListener('touchend', onTouchEnd, { passive: true })
+    root.addEventListener('touchcancel', onTouchEnd, { passive: true })
+    root.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      touchActive = false
+      if (touchRaf) cancelAnimationFrame(touchRaf)
+      root.removeEventListener('touchstart', onTouchStart)
+      root.removeEventListener('touchend', onTouchEnd)
+      root.removeEventListener('touchcancel', onTouchEnd)
+      root.removeEventListener('scroll', onScroll)
+    }
+  }, [syncVideoToScroll, queueSync])
+
+  useEffect(() => {
+    const root = document.getElementById('portfolio-scroll')
     if (!root || typeof ResizeObserver === 'undefined') return
 
     const observer = new ResizeObserver(() => {
@@ -296,10 +347,10 @@ export function ScrollVideoBackground() {
   }, [queueSync, lenis])
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#050505]">
+    <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#050505] [contain:strict]">
       <video
         ref={videoRef}
-        className="pointer-events-none h-full w-full scale-105 object-cover select-none [transform:translateZ(0)]"
+        className="pointer-events-none h-full w-full scale-[1.02] object-cover select-none will-change-transform [transform:translate3d(0,0,0)] md:scale-105"
         muted
         playsInline
         preload="auto"
