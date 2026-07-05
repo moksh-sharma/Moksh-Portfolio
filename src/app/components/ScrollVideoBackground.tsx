@@ -4,12 +4,9 @@ import { useScrollVideo } from '../context/ScrollVideoContext'
 
 const VIDEO_SRC = `${import.meta.env.BASE_URL}videos/background-scroll.mp4`
 const VIDEO_FPS = 60000 / 1001
-const WARMUP_STEPS = 24
-const MIN_SCROLL_RANGE_RATIO = 2
-const INIT_TIMEOUT_MS = 16000
-const METADATA_TIMEOUT_MS = 8000
-const SEEK_RETRY_MS = 120
-const SEEK_MAX_ATTEMPTS = 6
+const WARMUP_STEPS = 8
+const INIT_TIMEOUT_MS = 12000
+const WARMUP_FRAME_BUDGET_MS = 3500
 
 function isTimeSeekable(video: HTMLVideoElement, time: number): boolean {
   const ranges = video.seekable
@@ -25,66 +22,37 @@ function waitForSeek(video: HTMLVideoElement): Promise<void> {
       resolve()
       return
     }
-    video.addEventListener('seeked', () => resolve(), { once: true })
+    const timeoutId = window.setTimeout(resolve, 80)
+    video.addEventListener(
+      'seeked',
+      () => {
+        window.clearTimeout(timeoutId)
+        resolve()
+      },
+      { once: true },
+    )
   })
 }
 
-async function seekToTime(video: HTMLVideoElement, time: number): Promise<boolean> {
-  for (let attempt = 0; attempt < SEEK_MAX_ATTEMPTS; attempt++) {
-    if (isTimeSeekable(video, time)) {
-      video.pause()
-      if ('fastSeek' in video && typeof video.fastSeek === 'function') {
-        video.fastSeek(time)
-      } else {
-        video.currentTime = time
-      }
-      await waitForSeek(video)
-      return true
-    }
-
-    await new Promise<void>((resolve) => {
-      let settled = false
-      const done = () => {
-        if (settled) return
-        settled = true
-        video.removeEventListener('progress', done)
-        window.clearTimeout(timeoutId)
-        resolve()
-      }
-      const timeoutId = window.setTimeout(done, SEEK_RETRY_MS)
-      video.addEventListener('progress', done, { once: true })
-    })
+function seekToTime(video: HTMLVideoElement, time: number): void {
+  if (!isTimeSeekable(video, time)) return
+  video.pause()
+  if ('fastSeek' in video && typeof video.fastSeek === 'function') {
+    video.fastSeek(time)
+  } else {
+    video.currentTime = time
   }
-
-  return false
-}
-
-function getBufferedRatio(video: HTMLVideoElement): number {
-  const duration = video.duration
-  if (!Number.isFinite(duration) || duration <= 0) return 0
-
-  let bufferedEnd = 0
-  for (let i = 0; i < video.buffered.length; i++) {
-    bufferedEnd = Math.max(bufferedEnd, video.buffered.end(i))
-  }
-  return bufferedEnd / duration
 }
 
 function readScrollMetrics() {
   const root = document.getElementById('portfolio-scroll')
-  if (!root) {
-    return { scrollTop: 0, maxScroll: 0, progress: 0, ready: false }
-  }
+  if (!root) return { progress: 0, ready: false }
 
   const maxScroll = root.scrollHeight - root.clientHeight
-  const ready = maxScroll >= window.innerHeight * MIN_SCROLL_RANGE_RATIO
-
-  if (maxScroll <= 0 || !ready) {
-    return { scrollTop: root.scrollTop, maxScroll, progress: 0, ready: false }
-  }
+  if (maxScroll <= 0) return { progress: 0, ready: false }
 
   const progress = Math.min(1, Math.max(0, root.scrollTop / maxScroll))
-  return { scrollTop: root.scrollTop, maxScroll, progress, ready: true }
+  return { progress, ready: true }
 }
 
 function progressToFrameTime(progress: number, duration: number): number {
@@ -94,10 +62,37 @@ function progressToFrameTime(progress: number, duration: number): number {
   return frameIndex / VIDEO_FPS
 }
 
-async function waitForScrollLayout(): Promise<void> {
-  for (let i = 0; i < 90; i++) {
-    if (readScrollMetrics().ready) return
-    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+async function fetchVideoBlob(
+  src: string,
+  onProgress: (ratio: number) => void,
+  isCancelled: () => boolean,
+): Promise<Blob | null> {
+  try {
+    const response = await fetch(src)
+    if (!response.ok) return null
+
+    const total = Number(response.headers.get('Content-Length'))
+    if (!response.body || !Number.isFinite(total) || total <= 0) {
+      onProgress(0.85)
+      return response.blob()
+    }
+
+    const reader = response.body.getReader()
+    const chunks: Uint8Array[] = []
+    let received = 0
+
+    while (true) {
+      if (isCancelled()) return null
+      const { done, value } = await reader.read()
+      if (done) break
+      chunks.push(value)
+      received += value.length
+      onProgress(Math.min(0.85, received / total))
+    }
+
+    return new Blob(chunks as BlobPart[], { type: 'video/mp4' })
+  } catch {
+    return null
   }
 }
 
@@ -107,6 +102,8 @@ export function ScrollVideoBackground() {
   const durationRef = useRef(0)
   const lastFrameRef = useRef(-1)
   const readyRef = useRef(false)
+  const syncQueuedRef = useRef(false)
+  const objectUrlRef = useRef<string | null>(null)
   const lenis = useLenis()
 
   const applyFrameForProgress = useCallback((progress: number) => {
@@ -121,13 +118,7 @@ export function ScrollVideoBackground() {
     if (!isTimeSeekable(video, targetTime)) return
 
     lastFrameRef.current = targetFrame
-    video.pause()
-
-    if ('fastSeek' in video && typeof video.fastSeek === 'function') {
-      video.fastSeek(targetTime)
-    } else {
-      video.currentTime = targetTime
-    }
+    seekToTime(video, targetTime)
   }, [])
 
   const syncVideoToScroll = useCallback(() => {
@@ -136,12 +127,20 @@ export function ScrollVideoBackground() {
     applyFrameForProgress(progress)
   }, [applyFrameForProgress])
 
+  const queueSync = useCallback(() => {
+    if (syncQueuedRef.current) return
+    syncQueuedRef.current = true
+    requestAnimationFrame(() => {
+      syncQueuedRef.current = false
+      syncVideoToScroll()
+    })
+  }, [syncVideoToScroll])
+
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
     let cancelled = false
-    let warmupStarted = false
     let finished = false
 
     const blockPlayback = () => {
@@ -161,128 +160,127 @@ export function ScrollVideoBackground() {
     video.addEventListener('playing', blockPlayback)
     video.addEventListener('contextmenu', blockPlayAttempt)
 
-    const finishInit = async () => {
+    const finishInit = () => {
       if (cancelled || finished) return
       finished = true
 
-      await waitForScrollLayout()
-      if (cancelled) return
-
       lenis?.resize()
       video.pause()
-
-      const duration = durationRef.current
-      if (Number.isFinite(duration) && duration > 0) {
-        await seekToTime(video, 0)
-      }
-
+      seekToTime(video, 0)
       lastFrameRef.current = -1
       readyRef.current = true
       setProgress(100)
       setReady(true)
-      syncVideoToScroll()
-    }
-
-    const updateBufferProgress = () => {
-      if (!video.duration || !Number.isFinite(video.duration)) return
-      const pct = Math.min(72, getBufferedRatio(video) * 72)
-      setProgress(Math.max(8, pct))
+      queueSync()
     }
 
     const warmup = async () => {
       const duration = video.duration
       if (!Number.isFinite(duration) || duration <= 0) {
-        await finishInit()
+        finishInit()
         return
       }
 
-      const deadline = performance.now() + INIT_TIMEOUT_MS
+      durationRef.current = duration
+      const deadline = performance.now() + WARMUP_FRAME_BUDGET_MS
 
       for (let i = 0; i <= WARMUP_STEPS; i++) {
         if (cancelled || finished) return
         if (performance.now() >= deadline) break
 
         const t = progressToFrameTime(i / WARMUP_STEPS, duration)
-        await seekToTime(video, t)
-        setProgress(72 + (i / WARMUP_STEPS) * 22)
+        seekToTime(video, t)
+        await waitForSeek(video)
+        setProgress(88 + (i / WARMUP_STEPS) * 10)
       }
 
       if (cancelled) return
-      setProgress(96)
-      await finishInit()
+      finishInit()
     }
 
     const onLoadedMetadata = () => {
-      if (warmupStarted) return
-      warmupStarted = true
-
       durationRef.current = video.duration
       video.pause()
-      setProgress(8)
-      updateBufferProgress()
       void warmup()
     }
 
-    const onProgress = () => {
-      if (!readyRef.current) updateBufferProgress()
-    }
+    const init = async () => {
+      setProgress(4)
 
-    const onError = () => {
-      void finishInit()
-    }
+      const blob = await fetchVideoBlob(
+        VIDEO_SRC,
+        (ratio) => setProgress(4 + ratio * 80),
+        () => cancelled,
+      )
 
-    const metadataTimeoutId = window.setTimeout(() => {
-      if (!warmupStarted && !finished) {
-        durationRef.current = video.duration || 0
-        warmupStarted = true
-        setProgress(8)
-        void warmup()
+      if (cancelled) return
+
+      if (blob) {
+        if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+        objectUrlRef.current = URL.createObjectURL(blob)
+        video.src = objectUrlRef.current
+      } else {
+        video.src = VIDEO_SRC
       }
-    }, METADATA_TIMEOUT_MS)
+
+      setProgress(86)
+      video.load()
+
+      await new Promise<void>((resolve) => {
+        if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+          resolve()
+          return
+        }
+        const onMeta = () => {
+          video.removeEventListener('loadedmetadata', onMeta)
+          video.removeEventListener('error', onErr)
+          resolve()
+        }
+        const onErr = () => {
+          video.removeEventListener('loadedmetadata', onMeta)
+          video.removeEventListener('error', onErr)
+          resolve()
+        }
+        video.addEventListener('loadedmetadata', onMeta)
+        video.addEventListener('error', onErr)
+      })
+
+      if (cancelled) return
+
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+        onLoadedMetadata()
+      } else {
+        finishInit()
+      }
+    }
 
     const initTimeoutId = window.setTimeout(() => {
-      if (!finished) void finishInit()
+      if (!finished) finishInit()
     }, INIT_TIMEOUT_MS)
 
-    video.addEventListener('loadedmetadata', onLoadedMetadata)
-    video.addEventListener('progress', onProgress)
-    video.addEventListener('error', onError)
-    video.load()
-
-    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
-      onLoadedMetadata()
-    }
+    void init()
 
     return () => {
       cancelled = true
-      window.clearTimeout(metadataTimeoutId)
       window.clearTimeout(initTimeoutId)
       video.play = nativePlay
       video.removeEventListener('play', blockPlayAttempt)
       video.removeEventListener('playing', blockPlayback)
       video.removeEventListener('contextmenu', blockPlayAttempt)
-      video.removeEventListener('loadedmetadata', onLoadedMetadata)
-      video.removeEventListener('progress', onProgress)
-      video.removeEventListener('error', onError)
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current)
+        objectUrlRef.current = null
+      }
     }
-  }, [setProgress, setReady, syncVideoToScroll, lenis])
+  }, [setProgress, setReady, queueSync, lenis])
 
   useLenis(
     useCallback(() => {
-      syncVideoToScroll()
-    }, [syncVideoToScroll]),
+      queueSync()
+    }, [queueSync]),
     [],
     1,
   )
-
-  useEffect(() => {
-    const root = document.getElementById('portfolio-scroll')
-    if (!root) return
-
-    const onScroll = () => syncVideoToScroll()
-    root.addEventListener('scroll', onScroll, { passive: true })
-    return () => root.removeEventListener('scroll', onScroll)
-  }, [syncVideoToScroll])
 
   useEffect(() => {
     const root = document.getElementById('portfolio-scroll')
@@ -290,22 +288,18 @@ export function ScrollVideoBackground() {
 
     const observer = new ResizeObserver(() => {
       lenis?.resize()
-      syncVideoToScroll()
+      queueSync()
     })
 
     observer.observe(root)
-    const content = root.firstElementChild
-    if (content) observer.observe(content)
-
     return () => observer.disconnect()
-  }, [syncVideoToScroll, lenis])
+  }, [queueSync, lenis])
 
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-[#050505]">
       <video
         ref={videoRef}
-        src={VIDEO_SRC}
-        className="pointer-events-none h-full w-full scale-105 object-cover select-none"
+        className="pointer-events-none h-full w-full scale-105 object-cover select-none [transform:translateZ(0)]"
         muted
         playsInline
         preload="auto"
