@@ -2,67 +2,14 @@ import { useRef, useEffect, useCallback, type VideoHTMLAttributes } from 'react'
 import { useLenis } from 'lenis/react'
 import { useScrollVideo } from '../context/ScrollVideoContext'
 
-const VIDEO_SRC = '/videos/background-scroll.mp4'
+const VIDEO_SRC = `${import.meta.env.BASE_URL}videos/background-scroll.mp4`
 const VIDEO_FPS = 60000 / 1001
 const WARMUP_STEPS = 24
 const MIN_SCROLL_RANGE_RATIO = 2
-const MIN_BUFFER_RATIO = 0.9
-const BUFFER_WAIT_MS = 90000
-const SEEK_RETRY_MS = 300
-const SEEK_MAX_ATTEMPTS = 12
-
-function getBufferedRatio(video: HTMLVideoElement): number {
-  const duration = video.duration
-  if (!Number.isFinite(duration) || duration <= 0) return 0
-
-  let bufferedEnd = 0
-  for (let i = 0; i < video.buffered.length; i++) {
-    bufferedEnd = Math.max(bufferedEnd, video.buffered.end(i))
-  }
-  return bufferedEnd / duration
-}
-
-async function waitForBufferedCoverage(
-  video: HTMLVideoElement,
-  minRatio: number,
-  timeoutMs: number,
-  onProgress?: (ratio: number) => void,
-  isCancelled?: () => boolean,
-): Promise<boolean> {
-  const startedAt = performance.now()
-
-  return new Promise((resolve) => {
-    const finish = (ok: boolean) => {
-      video.removeEventListener('progress', tick)
-      resolve(ok)
-    }
-
-    const tick = () => {
-      if (isCancelled?.()) {
-        finish(false)
-        return
-      }
-
-      const ratio = getBufferedRatio(video)
-      onProgress?.(ratio)
-
-      if (ratio >= minRatio) {
-        finish(true)
-        return
-      }
-
-      if (performance.now() - startedAt >= timeoutMs) {
-        finish(ratio >= minRatio * 0.75)
-        return
-      }
-
-      requestAnimationFrame(tick)
-    }
-
-    video.addEventListener('progress', tick)
-    tick()
-  })
-}
+const INIT_TIMEOUT_MS = 16000
+const METADATA_TIMEOUT_MS = 8000
+const SEEK_RETRY_MS = 120
+const SEEK_MAX_ATTEMPTS = 6
 
 function isTimeSeekable(video: HTMLVideoElement, time: number): boolean {
   const ranges = video.seekable
@@ -70,6 +17,16 @@ function isTimeSeekable(video: HTMLVideoElement, time: number): boolean {
     if (time >= ranges.start(i) && time <= ranges.end(i)) return true
   }
   return false
+}
+
+function waitForSeek(video: HTMLVideoElement): Promise<void> {
+  return new Promise((resolve) => {
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      resolve()
+      return
+    }
+    video.addEventListener('seeked', () => resolve(), { once: true })
+  })
 }
 
 async function seekToTime(video: HTMLVideoElement, time: number): Promise<boolean> {
@@ -102,14 +59,15 @@ async function seekToTime(video: HTMLVideoElement, time: number): Promise<boolea
   return false
 }
 
-function waitForSeek(video: HTMLVideoElement): Promise<void> {
-  return new Promise((resolve) => {
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-      resolve()
-      return
-    }
-    video.addEventListener('seeked', () => resolve(), { once: true })
-  })
+function getBufferedRatio(video: HTMLVideoElement): number {
+  const duration = video.duration
+  if (!Number.isFinite(duration) || duration <= 0) return 0
+
+  let bufferedEnd = 0
+  for (let i = 0; i < video.buffered.length; i++) {
+    bufferedEnd = Math.max(bufferedEnd, video.buffered.end(i))
+  }
+  return bufferedEnd / duration
 }
 
 function readScrollMetrics() {
@@ -137,7 +95,7 @@ function progressToFrameTime(progress: number, duration: number): number {
 }
 
 async function waitForScrollLayout(): Promise<void> {
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 90; i++) {
     if (readScrollMetrics().ready) return
     await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
   }
@@ -163,7 +121,6 @@ export function ScrollVideoBackground() {
     if (!isTimeSeekable(video, targetTime)) return
 
     lastFrameRef.current = targetFrame
-
     video.pause()
 
     if ('fastSeek' in video && typeof video.fastSeek === 'function') {
@@ -185,6 +142,7 @@ export function ScrollVideoBackground() {
 
     let cancelled = false
     let warmupStarted = false
+    let finished = false
 
     const blockPlayback = () => {
       if (!video.paused) video.pause()
@@ -203,6 +161,28 @@ export function ScrollVideoBackground() {
     video.addEventListener('playing', blockPlayback)
     video.addEventListener('contextmenu', blockPlayAttempt)
 
+    const finishInit = async () => {
+      if (cancelled || finished) return
+      finished = true
+
+      await waitForScrollLayout()
+      if (cancelled) return
+
+      lenis?.resize()
+      video.pause()
+
+      const duration = durationRef.current
+      if (Number.isFinite(duration) && duration > 0) {
+        await seekToTime(video, 0)
+      }
+
+      lastFrameRef.current = -1
+      readyRef.current = true
+      setProgress(100)
+      setReady(true)
+      syncVideoToScroll()
+    }
+
     const updateBufferProgress = () => {
       if (!video.duration || !Number.isFinite(video.duration)) return
       const pct = Math.min(72, getBufferedRatio(video) * 72)
@@ -211,50 +191,25 @@ export function ScrollVideoBackground() {
 
     const warmup = async () => {
       const duration = video.duration
-      if (!Number.isFinite(duration) || duration <= 0) return
+      if (!Number.isFinite(duration) || duration <= 0) {
+        await finishInit()
+        return
+      }
 
-      setProgress(10)
-      await waitForBufferedCoverage(
-        video,
-        0.2,
-        BUFFER_WAIT_MS,
-        (ratio) => setProgress(Math.max(10, Math.min(68, ratio * 68))),
-        () => cancelled,
-      )
-      if (cancelled) return
+      const deadline = performance.now() + INIT_TIMEOUT_MS
 
       for (let i = 0; i <= WARMUP_STEPS; i++) {
-        if (cancelled) return
+        if (cancelled || finished) return
+        if (performance.now() >= deadline) break
+
         const t = progressToFrameTime(i / WARMUP_STEPS, duration)
         await seekToTime(video, t)
-        setProgress(72 + (i / WARMUP_STEPS) * 18)
+        setProgress(72 + (i / WARMUP_STEPS) * 22)
       }
 
       if (cancelled) return
-
-      setProgress(92)
-      await waitForBufferedCoverage(
-        video,
-        MIN_BUFFER_RATIO,
-        BUFFER_WAIT_MS,
-        (ratio) => setProgress(Math.max(92, Math.min(97, 92 + ratio * 5))),
-        () => cancelled,
-      )
-      if (cancelled) return
-
-      setProgress(97)
-      await waitForScrollLayout()
-      if (cancelled) return
-
-      lenis?.resize()
-
-      video.pause()
-      await seekToTime(video, 0)
-      lastFrameRef.current = -1
-      readyRef.current = true
-      setProgress(100)
-      setReady(true)
-      syncVideoToScroll()
+      setProgress(96)
+      await finishInit()
     }
 
     const onLoadedMetadata = () => {
@@ -273,13 +228,26 @@ export function ScrollVideoBackground() {
     }
 
     const onError = () => {
-      readyRef.current = true
-      setReady(true)
+      void finishInit()
     }
+
+    const metadataTimeoutId = window.setTimeout(() => {
+      if (!warmupStarted && !finished) {
+        durationRef.current = video.duration || 0
+        warmupStarted = true
+        setProgress(8)
+        void warmup()
+      }
+    }, METADATA_TIMEOUT_MS)
+
+    const initTimeoutId = window.setTimeout(() => {
+      if (!finished) void finishInit()
+    }, INIT_TIMEOUT_MS)
 
     video.addEventListener('loadedmetadata', onLoadedMetadata)
     video.addEventListener('progress', onProgress)
     video.addEventListener('error', onError)
+    video.load()
 
     if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
       onLoadedMetadata()
@@ -287,6 +255,8 @@ export function ScrollVideoBackground() {
 
     return () => {
       cancelled = true
+      window.clearTimeout(metadataTimeoutId)
+      window.clearTimeout(initTimeoutId)
       video.play = nativePlay
       video.removeEventListener('play', blockPlayAttempt)
       video.removeEventListener('playing', blockPlayback)

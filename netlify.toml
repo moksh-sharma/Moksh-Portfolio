@@ -34,6 +34,12 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
 
 # SPA fallback: static files in dist/ (e.g. /videos/*, /assets/*) are served first.
+# Do not enable Netlify Asset Optimization for this site (breaks large MP4 range requests).
+[[redirects]]
+  from = "/videos/*"
+  to = "/videos/:splat"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"

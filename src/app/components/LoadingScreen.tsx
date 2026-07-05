@@ -7,6 +7,7 @@ import LoaderCounter from './loading/LoaderCounter'
 const MIN_VISIBLE_MS = 4000
 const LOADER_DURATION_MS = 4000
 const EXIT_DELAY_MS = 420
+const MAX_BOOT_MS = 14000
 const LERP = 0.045
 const EASE = [0.22, 1, 0.36, 1] as const
 
@@ -63,6 +64,17 @@ export function LoadingScreen() {
 
   useEffect(() => {
     const t = window.setTimeout(() => setMinElapsed(true), MIN_VISIBLE_MS)
+    return () => window.clearTimeout(t)
+  }, [])
+
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      if (finishedRef.current || !showRef.current) return
+      finishedRef.current = true
+      displayRef.current = 100
+      setDisplay(100)
+      scheduleHide()
+    }, MAX_BOOT_MS)
     return () => window.clearTimeout(t)
   }, [])
 

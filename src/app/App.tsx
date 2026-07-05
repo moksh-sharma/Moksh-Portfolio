@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { ReactLenis } from 'lenis/react'
 import 'lenis/dist/lenis.css'
 import { ScrollVideoProvider } from './context/ScrollVideoContext'
@@ -8,8 +8,6 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import { LoadingScreen } from './components/LoadingScreen'
 
 export default function App() {
-  const [mounted, setMounted] = useState(false)
-
   const lenisOptions = useMemo(
     () => ({
       anchors: true,
@@ -24,10 +22,6 @@ export default function App() {
     [],
   )
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   return (
     <ScrollVideoProvider>
       <div className="w-full h-dvh min-h-0 bg-[#050505] text-neutral-50 relative selection:bg-indigo-500/30 font-sans overflow-hidden">
@@ -36,11 +30,9 @@ export default function App() {
           className="relative z-10 h-full w-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain [-webkit-overflow-scrolling:touch] pb-[max(0px,env(safe-area-inset-bottom))]"
           options={lenisOptions}
         >
-          {mounted && (
-            <ErrorBoundary name="ScrollVideoBackground">
-              <ScrollVideoBackground />
-            </ErrorBoundary>
-          )}
+          <ErrorBoundary name="ScrollVideoBackground">
+            <ScrollVideoBackground />
+          </ErrorBoundary>
           <ErrorBoundary name="Overlay">
             <Overlay />
           </ErrorBoundary>
