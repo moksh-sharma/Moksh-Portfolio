@@ -1,10 +1,14 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { useProgress } from '@react-three/drei'
+import { useScrollVideo } from '../context/ScrollVideoContext'
+import BouncingDots from './loading/BouncingDots'
+import LoaderCounter from './loading/LoaderCounter'
 
-const MIN_VISIBLE_MS = 1000
-const RAMP_MS = 2400
-const LERP = 0.06
+const MIN_VISIBLE_MS = 4000
+const LOADER_DURATION_MS = 4000
+const EXIT_DELAY_MS = 420
+const LERP = 0.045
+const EASE = [0.22, 1, 0.36, 1] as const
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n))
@@ -14,25 +18,48 @@ function easeOutCubic(t: number) {
   return 1 - (1 - clamp(t, 0, 1)) ** 3
 }
 
+function timeCappedProgress(elapsedMs: number, actualProgress: number) {
+  const timeProgress = easeOutCubic(Math.min(1, elapsedMs / LOADER_DURATION_MS)) * 100
+  return Math.min(actualProgress, timeProgress)
+}
+
+function getLoadingStatus(progress: number, ready: boolean) {
+  if (ready && progress >= 99) return 'Opening portfolio'
+  if (progress >= 94) return 'Syncing scroll experience'
+  if (progress >= 72) return 'Caching video frames'
+  if (progress >= 8) return 'Loading background film'
+  return 'Initializing experience'
+}
+
 export function LoadingScreen() {
-  const { active, progress } = useProgress()
+  const { progress, ready } = useScrollVideo()
   const reduceMotion = useReducedMotion() ?? false
   const [minElapsed, setMinElapsed] = useState(false)
   const [show, setShow] = useState(true)
   const [display, setDisplay] = useState(0)
 
   const progressRef = useRef(progress)
-  const activeRef = useRef(active)
+  const readyRef = useRef(ready)
   const minElapsedRef = useRef(minElapsed)
   const showRef = useRef(show)
   const displayRef = useRef(0)
   const startedAtRef = useRef(performance.now())
   const finishedRef = useRef(false)
+  const hideTimeoutRef = useRef<number | null>(null)
 
   progressRef.current = progress
-  activeRef.current = active
+  readyRef.current = ready
   minElapsedRef.current = minElapsed
   showRef.current = show
+
+  const status = useMemo(() => getLoadingStatus(display, ready), [display, ready])
+  const counterValue = Math.round(clamp(display, 0, 100))
+  const canDismiss = minElapsed && ready
+
+  const scheduleHide = () => {
+    if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    hideTimeoutRef.current = window.setTimeout(() => setShow(false), EXIT_DELAY_MS)
+  }
 
   useEffect(() => {
     const t = window.setTimeout(() => setMinElapsed(true), MIN_VISIBLE_MS)
@@ -40,147 +67,173 @@ export function LoadingScreen() {
   }, [])
 
   useEffect(() => {
-    if (!reduceMotion) return
-    if (!show || finishedRef.current) return
-
-    const p = clamp(Number.isFinite(progress) ? progress : 0, 0, 100)
-    if (minElapsed && !active) {
-      finishedRef.current = true
-      displayRef.current = 100
-      setDisplay(100)
-      const hide = window.setTimeout(() => setShow(false), 150)
-      return () => window.clearTimeout(hide)
-    }
-    displayRef.current = p
-    setDisplay(p)
-  }, [reduceMotion, show, minElapsed, active, progress])
+    if (!show) return
+    const scrollRoot = document.getElementById('portfolio-scroll')
+    scrollRoot?.classList.add('overflow-hidden')
+    return () => scrollRoot?.classList.remove('overflow-hidden')
+  }, [show])
 
   useEffect(() => {
-    if (reduceMotion || !show || finishedRef.current) return
+    return () => {
+      if (hideTimeoutRef.current) window.clearTimeout(hideTimeoutRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!show || finishedRef.current) return
+
+    const tickDisplay = (elapsed: number) => {
+      const p = clamp(Number.isFinite(progressRef.current) ? progressRef.current : 0, 0, 100)
+      const minOk = minElapsedRef.current
+      const isLoading = !readyRef.current
+
+      let target: number
+      if (minOk && !isLoading) {
+        target = 100
+      } else {
+        target = timeCappedProgress(elapsed, p)
+      }
+
+      const cur = displayRef.current
+      const closing = minOk && !isLoading
+      const lerpAmt = closing ? 0.18 : LERP
+      const next = Math.min(100, cur + (target - cur) * lerpAmt)
+      displayRef.current = next
+      setDisplay(next)
+
+      if (minOk && !isLoading && next >= 98.25) {
+        finishedRef.current = true
+        displayRef.current = 100
+        setDisplay(100)
+        scheduleHide()
+        return true
+      }
+      return false
+    }
+
+    if (reduceMotion) {
+      const interval = window.setInterval(() => {
+        if (finishedRef.current || !showRef.current) return
+        const elapsed = performance.now() - startedAtRef.current
+        tickDisplay(elapsed)
+      }, 100)
+      return () => window.clearInterval(interval)
+    }
 
     startedAtRef.current = performance.now()
     let raf = 0
 
     const tick = () => {
       if (finishedRef.current || !showRef.current) return
-
       const elapsed = performance.now() - startedAtRef.current
-      const u = Math.min(1, elapsed / RAMP_MS)
-      const eased = easeOutCubic(u) * 100
-
-      const p = clamp(Number.isFinite(progressRef.current) ? progressRef.current : 0, 0, 100)
-      const isActive = activeRef.current
-      const minOk = minElapsedRef.current
-
-      let target: number
-      if (minOk && !isActive) {
-        target = 100
-      } else if (isActive) {
-        target = Math.max(p, eased * 0.94)
-      } else {
-        target = Math.max(p, eased)
-      }
-
-      const cur = displayRef.current
-      const closing = minOk && !isActive
-      const lerpAmt = closing ? 0.22 : LERP
-      const next = Math.min(100, cur + (target - cur) * lerpAmt)
-      displayRef.current = next
-      setDisplay(next)
-
-      if (minOk && !isActive && next >= 98.25) {
-        finishedRef.current = true
-        displayRef.current = 100
-        setDisplay(100)
-        window.setTimeout(() => setShow(false), 220)
-        return
-      }
-
-      raf = window.requestAnimationFrame(tick)
+      if (tickDisplay(elapsed)) return
+      raf = requestAnimationFrame(tick)
     }
 
-    raf = window.requestAnimationFrame(tick)
-    return () => window.cancelAnimationFrame(raf)
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [show, reduceMotion])
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       {show && (
         <motion.div
           key="portfolio-loader"
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#050505] px-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-[max(1rem,env(safe-area-inset-top,0px))] font-sans text-white pointer-events-auto"
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-hidden bg-[#030303] px-4 pb-[max(1rem,env(safe-area-inset-bottom,0px))] pt-[max(1rem,env(safe-area-inset-top,0px))] font-sans text-white pointer-events-auto"
           initial={{ opacity: 1 }}
           exit={{
             opacity: 0,
-            transition: { duration: reduceMotion ? 0.2 : 0.55, ease: [0.22, 1, 0.36, 1] as const },
+            scale: 1.015,
+            filter: reduceMotion ? 'none' : 'blur(12px)',
+            transition: { duration: reduceMotion ? 0.2 : 0.65, ease: EASE },
           }}
-          aria-busy="true"
+          aria-busy={!canDismiss}
           aria-live="polite"
           aria-label="Loading portfolio"
         >
-          <div className="pointer-events-none flex flex-col items-center gap-10 px-6">
-            <div className="relative flex h-28 w-28 items-center justify-center md:h-32 md:w-32">
-              {!reduceMotion && (
-                <>
-                  <motion.span
-                    className="absolute inset-0 rounded-full border-2 border-indigo-500/25"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-                  />
-                  <motion.span
-                    className="absolute inset-2 rounded-full border border-cyan-400/20"
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 5.5, repeat: Infinity, ease: 'linear' }}
-                  />
-                  <motion.span
-                    className="absolute inset-0 rounded-full"
-                    style={{
-                      background:
-                        'conic-gradient(from 0deg, transparent 0%, rgba(129,140,248,0.35) 40%, rgba(34,211,238,0.25) 60%, transparent 100%)',
-                    }}
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 2.8, repeat: Infinity, ease: 'linear' }}
-                  />
-                </>
-              )}
-              <div className="relative z-[1] grid h-16 w-16 place-items-center rounded-2xl border border-white/10 bg-black/40 shadow-[0_0_40px_-8px_rgba(129,140,248,0.45)] backdrop-blur-sm md:h-[4.5rem] md:w-[4.5rem]">
-                <span className="text-lg font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-cyan-300 md:text-xl">
-                  MS
-                </span>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <motion.h1
-                className="text-2xl font-bold tracking-tight text-white md:text-4xl"
-                initial={false}
-                animate={
-                  reduceMotion
-                    ? {}
-                    : { opacity: [0.85, 1, 0.85], transition: { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } }
-                }
-              >
-                <span className="bg-gradient-to-r from-indigo-200 via-white to-cyan-200 bg-clip-text text-transparent">
-                  Moksh Sharma
-                </span>
-              </motion.h1>
-              <p className="mt-2 text-xs font-medium uppercase tracking-[0.35em] text-neutral-500 md:text-sm">
-                Portfolio
-              </p>
-            </div>
-
-            <div className="w-[min(100%,280px)] space-y-2 md:w-80">
-              <div className="h-1 overflow-hidden rounded-full bg-white/10">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-indigo-500 via-violet-500 to-cyan-400"
-                  style={{ width: `${clamp(display, 0, 100)}%` }}
-                />
-              </div>
-              <p className="text-center font-mono text-[11px] tabular-nums text-neutral-500 md:text-xs">
-                {display < 99.5 ? `${Math.round(display)}%` : 'Ready'}
-              </p>
-            </div>
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <div className="absolute left-1/2 top-[36%] h-[min(75vw,440px)] w-[min(75vw,440px)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-600/20 blur-[110px]" />
+            <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-[90px]" />
+            <div
+              className="absolute inset-0 opacity-[0.03]"
+              style={{
+                backgroundImage:
+                  'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                backgroundSize: '44px 44px',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/65" />
           </div>
+
+          <motion.div
+            className="relative flex w-full max-w-sm flex-col items-center"
+            initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASE }}
+          >
+            <BouncingDots
+              backgroundColor="transparent"
+              dotGradientStart="#818cf8"
+              dotGradientEnd="#22d3ee"
+              glowColor="rgba(129, 140, 248, 0.85)"
+              rippleColor="rgba(34, 211, 238, 0.3)"
+              shadowColor="rgba(99, 102, 241, 0.45)"
+              dotSize={20}
+              bounceHeight={40}
+              dotSpacing={14}
+              animationDuration={1.65}
+              className="scale-95 sm:scale-100"
+              style={{ paddingTop: 8, paddingBottom: 4, minHeight: 0 }}
+            />
+
+            <div
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={counterValue}
+              aria-label="Loading progress"
+              className="mt-1"
+            >
+              <LoaderCounter
+                value={counterValue}
+                to={100}
+                suffix="%"
+                color="#ffffff"
+                suffixColor="#94a3b8"
+                colorTransition
+                startColor="#818cf8"
+                endColor="#22d3ee"
+                startOnView={false}
+                font={{
+                  fontFamily: 'Outfit, sans-serif',
+                  fontWeight: 700,
+                  fontSize: 52,
+                  letterSpacing: -0.04,
+                  lineHeight: 1,
+                  textAlign: 'center',
+                }}
+              />
+            </div>
+
+            <div className="mt-5 h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={status}
+                className="mt-4 min-h-[1.25rem] text-center text-[11px] font-medium tracking-wide text-neutral-400"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.28, ease: EASE }}
+              >
+                {status}
+              </motion.p>
+            </AnimatePresence>
+
+            <p className="mt-3 text-center text-[10px] font-semibold uppercase tracking-[0.38em] text-neutral-500">
+              Moksh Sharma
+            </p>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
