@@ -11,7 +11,29 @@
 # Vite static site (publish: dist). If builds still fail on the Next plugin, remove
 # @netlify/plugin-nextjs: Site configuration → Integrations / Build plugins.
 
-# SPA fallback: real files (e.g. /assets/*) are served first; unmatched paths get index.html
+# Scroll-scrubbed background video: byte-range support is required for smooth seeking.
+# Netlify serves matching files from dist/ before these rules; keep Asset Optimization
+# disabled for this site (Site configuration → Build & deploy → Post processing).
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Accept-Ranges = "bytes"
+    Cache-Control = "public, max-age=31536000, immutable"
+    Content-Type = "video/mp4"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# SPA fallback: static files in dist/ (e.g. /videos/*, /assets/*) are served first.
 [[redirects]]
   from = "/*"
   to = "/index.html"

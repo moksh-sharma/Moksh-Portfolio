@@ -17,6 +17,7 @@ export default function App() {
       smoothWheel: true,
       syncTouch: true,
       syncTouchLerp: 0.075,
+      touchInertiaMultiplier: 1.15,
       wheelMultiplier: 0.65,
       touchMultiplier: 1,
     }),
@@ -32,7 +33,7 @@ export default function App() {
       <div className="w-full h-dvh min-h-0 bg-[#050505] text-neutral-50 relative selection:bg-indigo-500/30 font-sans overflow-hidden">
         <ReactLenis
           id="portfolio-scroll"
-          className="relative z-10 h-full w-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-[max(0px,env(safe-area-inset-bottom))]"
+          className="relative z-10 h-full w-full min-h-0 overflow-y-auto overflow-x-hidden overscroll-y-contain [-webkit-overflow-scrolling:touch] pb-[max(0px,env(safe-area-inset-bottom))]"
           options={lenisOptions}
         >
           {mounted && (
