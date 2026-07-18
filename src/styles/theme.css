@@ -179,15 +179,3 @@
     line-height: 1.5;
   }
 }
-
-#portfolio-scroll {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-}
-
-@media (pointer: coarse) {
-  #portfolio-scroll {
-    scroll-behavior: auto;
-  }
-}

@@ -1,8 +1,0 @@
-/videos/*
-  Accept-Ranges: bytes
-  Cache-Control: public, max-age=31536000, immutable
-  Content-Type: video/mp4
-  X-Content-Type-Options: nosniff
-
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable

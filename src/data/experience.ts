@@ -5,42 +5,38 @@ export type ExperienceEntry = {
   location: string
   period: string
   bullets: string[]
-  /** When false, card is display-only (no expand/collapse). Defaults to true. */
-  expandable?: boolean
-  /** Highlights the role as current on the timeline. */
-  current?: boolean
 }
 
 export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
   {
-    id: 'cache-digitech-junior-ai',
+    id: 'cache-digitech2',
     role: 'Junior AI Developer',
     company: 'Cache Digitech Pvt. Ltd.',
     location: 'New Delhi',
-    period: 'Jun 2026 – Present',
-    bullets: [],
-    expandable: false,
-    current: true,
+    period: 'June 2026 – Present',
+    bullets: [
+      'Developed and maintained AI-driven workflows including resume parsing, email ingestion, and intelligent data processing using FastAPI, PostgreSQL, Microsoft Graph API, and LLM integrations (Ollama/OpenAI).',
+      'Transformed raw business and technical inputs into structured dashboards, web interfaces, and automation pipelines, improving internal decision-making, workflow efficiency, and system scalability.',
+    ],
   },
   {
     id: 'cache-digitech',
     role: 'Data Analyst Intern',
     company: 'Cache Digitech Pvt. Ltd.',
     location: 'New Delhi',
-    period: 'Jan 2026 – Jun 2026',
+    period: 'January 2026 – June 2026',
     bullets: [
       'Worked across Data Analysis, Full Stack Development, and Generative AI to design and build scalable business solutions, contributing to platforms like TechBank.Ai, Email Intelligence, and Cache CRM.',
       'Developed and optimized AI-driven workflows including resume parsing, email ingestion, and intelligent data processing using FastAPI, PostgreSQL, Microsoft Graph API, and LLM integrations (Ollama/OpenAI).',
       'Transformed raw business and technical inputs into structured dashboards, web interfaces, and automation pipelines, improving internal decision-making, workflow efficiency, and system scalability.',
     ],
-    expandable: false,
   },
   {
     id: 'vgi-sooprs',
     role: 'Web Development Intern',
     company: 'VGI Sooprs Technology',
     location: 'Gurgaon',
-    period: 'Jul 2025 – Jul 2025',
+    period: 'July 2025 – July 2025',
     bullets: [
       'Developed 3+ responsive landing pages using modern frontend technologies, ensuring smooth UI behavior across devices.',
       'Implemented UI/UX designs into functional interfaces using 5+ tools, improving layout consistency and visual structure.',
@@ -52,7 +48,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'Data Science Intern',
     company: 'Easy Data Analytics Technology',
     location: 'Noida',
-    period: 'Jun 2025 – Jul 2025',
+    period: 'June 2025 – July 2025',
     bullets: [
       'Built a universal binary classification system using 5+ machine learning technologies, enabling customizable business use-cases.',
       'Applied data processing, feature engineering, and model evaluation techniques across multiple structured datasets and the ML pipeline.',
@@ -65,7 +61,7 @@ export const EXPERIENCE_ENTRIES: ExperienceEntry[] = [
     role: 'IOT Developer Intern',
     company: 'Binary Global Limited',
     location: 'New Delhi',
-    period: 'May 2024 – Jul 2024',
+    period: 'May 2024 – July 2024',
     bullets: [
       'Developed and maintained IOT software applications using programming languages such as Java, Python, and frameworks such as Spring and Django, leading to enhanced system functionality and performance.',
       'Collaborated with cross-functional teams to implement efficient algorithms and data structures, optimizing application scalability.',

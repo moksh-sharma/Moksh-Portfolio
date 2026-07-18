@@ -136,11 +136,11 @@ export function Overlay() {
   }
 
   return (
-    <div className="flex w-full max-w-[100vw] flex-col items-center overflow-x-hidden text-white font-sans pointer-events-none [&_h2]:drop-shadow-[0_2px_16px_rgba(0,0,0,0.85)] [&_h3]:drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]">
+    <div className="flex w-full max-w-[100vw] flex-col items-center overflow-x-hidden text-white font-sans pointer-events-none">
 
       {/* Fixed Nav (tablet/desktop only — hidden on mobile) */}
       <nav
-        className={`pointer-events-auto fixed left-0 top-0 z-50 hidden w-full pt-[max(0px,env(safe-area-inset-top))] transition-all duration-300 md:block ${scrolled ? 'border-b border-white/15 bg-black/70 py-3 backdrop-blur-md md:py-4' : 'bg-black/35 py-4 backdrop-blur-sm md:py-6'}`}
+        className={`pointer-events-auto fixed left-0 top-0 z-50 hidden w-full pt-[max(0px,env(safe-area-inset-top))] transition-all duration-300 md:block ${scrolled ? 'border-b border-white/10 bg-black/50 py-3 backdrop-blur-md md:py-4' : 'bg-transparent py-4 md:py-6'}`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:px-12">
           <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')} className="text-lg font-bold tracking-tighter text-white sm:text-xl md:text-xl">
@@ -153,7 +153,7 @@ export function Overlay() {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-neutral-200 transition-colors hover:text-white"
+                className="text-sm font-medium text-neutral-400 transition-colors hover:text-white"
               >
                 {link.name}
               </a>
@@ -174,13 +174,13 @@ export function Overlay() {
           className="z-10 pointer-events-auto flex w-full max-w-full flex-col items-center gap-8 text-center md:flex-row md:items-center md:gap-12 md:text-left"
         >
           <div className="flex w-full min-w-0 max-w-lg flex-1 flex-col items-stretch px-0 sm:max-w-xl sm:items-center md:max-w-none md:items-start md:px-0">
-            <div className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-white/15 bg-black/60 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
-              <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-300 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base">
+            <div className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-sm sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
+              <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-400 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base">
                 Hi, my name is
               </p>
               <h1 className="mb-3 text-center text-4xl font-bold uppercase leading-[1.06] tracking-tighter sm:mb-4 sm:text-5xl md:text-left md:text-7xl lg:text-8xl">
-                <span className="block bg-gradient-to-b from-white via-white to-white/90 bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(0,0,0,0.8)]">MOKSH</span>
-                <span className="block bg-gradient-to-b from-white via-white to-white/90 bg-clip-text text-transparent drop-shadow-[0_2px_20px_rgba(0,0,0,0.8)]">{' '}SHARMA</span>
+                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">MOKSH</span>
+                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">{' '}SHARMA</span>
               </h1>
               <h2 className="mb-5 min-h-[48px] text-center text-2xl font-bold text-neutral-500 sm:mb-6 sm:min-h-[52px] sm:text-3xl md:min-h-[80px] md:text-left md:text-5xl lg:text-6xl">
                 <TypeAnimation
@@ -190,11 +190,11 @@ export function Overlay() {
                   ]}
                   wrapper="span"
                   speed={50}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-300 to-indigo-300 drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]"
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400"
                   repeat={Infinity}
                 />
               </h2>
-              <p className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-normal leading-[1.65] text-neutral-100 sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl">
+              <p className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-light leading-[1.65] text-neutral-400 sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl">
                 I build interactive 3D experiences, scalable web applications, and intuitive user interfaces that live on the modern web.
               </p>
               <div className="mx-auto flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center md:mx-0 md:max-w-none md:justify-start md:gap-6">
@@ -208,7 +208,7 @@ export function Overlay() {
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, '#contact')}
-                  className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/30 bg-white/10 px-5 py-3 text-center text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1"
+                  className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/20 px-5 py-3 text-center text-sm font-semibold backdrop-blur-sm transition-all hover:bg-white/10 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1"
                 >
                   Contact Me
                 </a>
@@ -217,7 +217,7 @@ export function Overlay() {
           </div>
 
           <div className="order-first flex w-full max-w-[min(100%,18rem)] shrink-0 items-center justify-center sm:max-w-sm md:order-last md:max-w-md md:flex-1">
-            <div className="relative grid aspect-square w-full max-w-full shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-2xl border border-white/15 bg-black/60 p-3 shadow-[0_8px_32px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
+            <div className="relative grid aspect-square w-full max-w-full shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-sm sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
               <HeroMonogram />
             </div>
           </div>
@@ -236,9 +236,9 @@ export function Overlay() {
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.9 }}
+          animate={{ opacity: 0.5 }}
           transition={{ duration: 1, delay: 1.5 }}
-          className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom,0px)+0.5rem)] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 text-white/90 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] animate-bounce motion-reduce:animate-none motion-reduce:opacity-90 sm:bottom-10 sm:gap-2"
+          className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom,0px)+0.5rem)] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 animate-bounce motion-reduce:animate-none motion-reduce:opacity-70 sm:bottom-10 sm:gap-2"
         >
           <span className="text-xs tracking-widest uppercase font-medium">Scroll to explore</span>
           <ChevronDown size={20} />
@@ -255,14 +255,14 @@ export function Overlay() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-48px' }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="pointer-events-auto z-10 w-full rounded-2xl border border-white/15 bg-black/65 px-4 pb-5 pt-6 shadow-2xl backdrop-blur-md sm:rounded-3xl sm:px-8 sm:pt-8 md:px-12 md:pb-6 md:pt-10"
+          className="pointer-events-auto z-10 w-full rounded-2xl border border-white/5 bg-black/40 px-4 pb-5 pt-6 shadow-2xl backdrop-blur-md sm:rounded-3xl sm:px-8 sm:pt-8 md:px-12 md:pb-6 md:pt-10"
         >
           <h2 className="mb-6 text-3xl font-bold tracking-tight text-white sm:mb-8 sm:text-4xl md:mb-10 md:text-6xl">
             About Me.
           </h2>
 
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center md:gap-10">
-            <div className="flex-1 text-base font-normal leading-relaxed text-neutral-100 sm:text-lg">
+            <div className="flex-1 text-base font-light leading-relaxed text-neutral-300 sm:text-lg">
               <p>
                 GenAI and Full Stack Developer with experience in building{' '}
                 <strong className="text-white font-medium">AI-powered applications</strong> and{' '}
@@ -279,7 +279,7 @@ export function Overlay() {
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-300' : 'text-neutral-300 hover:text-white'}`}
+                    className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-400' : 'text-neutral-500 hover:text-neutral-300'}`}
                   >
                     {tab}
                     {activeTab === tab && (
@@ -299,9 +299,9 @@ export function Overlay() {
                     {['Python', 'React.js', 'Next.js', 'FastAPI', 'Flask', 'SQL', 'Excel', 'Git', 'REST APIs'].map(skill => (
                       <div
                         key={skill}
-                        className="flex min-h-0 flex-col items-center justify-center gap-1 rounded-xl border border-white/10 bg-white/10 p-2 text-center text-neutral-100 sm:flex-row sm:items-center sm:justify-start sm:gap-2 sm:p-3 sm:text-left"
+                        className="flex min-h-0 flex-col items-center justify-center gap-1 rounded-xl border border-white/5 bg-white/5 p-2 text-center sm:flex-row sm:items-center sm:justify-start sm:gap-2 sm:p-3 sm:text-left"
                       >
-                        <Code className="size-3.5 shrink-0 text-indigo-300 sm:size-4" />
+                        <Code className="size-3.5 shrink-0 text-indigo-400 sm:size-4" />
                         <span className="max-w-full break-words leading-snug sm:min-w-0">{skill}</span>
                       </div>
                     ))}
@@ -310,25 +310,25 @@ export function Overlay() {
                 {activeTab === 'Education' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5 sm:space-y-6">
                     <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-300 sm:p-3">
+                      <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-400 sm:p-3">
                         <GraduationCap className="size-5 sm:size-6" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-balance text-lg font-bold text-white sm:text-xl">
                           B.Tech, Computer Science Engineering
                         </h4>
-                        <p className="mt-1 text-xs leading-snug text-indigo-200 sm:text-sm">
+                        <p className="mt-1 text-xs leading-snug text-indigo-400 sm:text-sm">
                           Bennett University, Times Group, Greater Noida • Aug 2023 – Aug 2027
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-white/10 p-2.5 text-neutral-200 sm:p-3">
+                      <div className="flex shrink-0 self-start rounded-xl bg-white/5 p-2.5 text-neutral-400 sm:p-3">
                         <GraduationCap className="size-5 sm:size-6" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-balance text-lg font-bold text-white sm:text-xl">Class XII & Class X, CBSE</h4>
-                        <p className="mt-1 text-xs leading-snug text-neutral-200 sm:text-sm">
+                        <p className="mt-1 text-xs leading-snug text-neutral-500 sm:text-sm">
                           DAV Public School, Sector 49, Gurgaon • Apr 2010 – Apr 2023
                         </p>
                       </div>
@@ -356,7 +356,7 @@ export function Overlay() {
           className="pointer-events-auto text-center"
         >
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Latest Works</h2>
-          <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-normal leading-relaxed text-neutral-100 sm:mb-12 sm:text-lg md:text-xl">
+          <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-xl">
             A selection of projects spanning data tools, web apps, and full-stack development. Click a project to see details.
           </p>
         </motion.div>
@@ -372,7 +372,7 @@ export function Overlay() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.5, delay: i * 0.05, layout: { type: 'spring', bounce: 0.2, duration: 0.45 } }}
-                className={`rounded-xl border bg-black/70 shadow-xl backdrop-blur-xl transition-colors sm:rounded-2xl ${open ? 'border-indigo-500/50 bg-black/75' : 'border-white/15 hover:border-white/30'}`}
+                className={`rounded-xl border bg-[#0a0a0a]/80 shadow-xl backdrop-blur-xl transition-colors sm:rounded-2xl ${open ? 'border-indigo-500/40 bg-white/[0.04]' : 'border-white/10 hover:border-white/20'}`}
               >
                 <button
                   type="button"
@@ -391,13 +391,13 @@ export function Overlay() {
                       {work.title}
                     </h3>
                     {!open && (
-                      <p className="mt-2 text-sm text-neutral-300 font-light">Click to view details</p>
+                      <p className="mt-2 text-sm text-neutral-500 font-light">Click to view details</p>
                     )}
                   </div>
                   <motion.span
                     animate={{ rotate: open ? 180 : 0 }}
                     transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-                    className={`inline-flex shrink-0 ${open ? 'text-indigo-300' : 'text-neutral-300'}`}
+                    className={`inline-flex shrink-0 ${open ? 'text-indigo-400' : 'text-neutral-500'}`}
                     aria-hidden
                   >
                     <ChevronDown size={22} />
@@ -418,7 +418,7 @@ export function Overlay() {
                     >
                       <motion.p
                         variants={workDetailItemVariants}
-                        className="text-[15px] font-normal leading-relaxed text-neutral-100 sm:text-base"
+                        className="text-[15px] font-light leading-relaxed text-neutral-300 sm:text-base"
                       >
                         {work.description}
                       </motion.p>
@@ -427,7 +427,7 @@ export function Overlay() {
                           <motion.span
                             key={`${work.id}-tag-${ti}`}
                             variants={workDetailItemVariants}
-                            className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-medium text-neutral-100"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-neutral-300"
                           >
                             {tag}
                           </motion.span>
@@ -440,7 +440,7 @@ export function Overlay() {
                           rel="noreferrer"
                           tabIndex={open ? undefined : -1}
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-400/50 bg-indigo-500/20 px-4 py-2.5 text-sm font-semibold text-indigo-100 transition-all hover:border-cyan-400/50 hover:bg-cyan-500/20 hover:text-cyan-50 sm:min-h-0 sm:px-5"
+                          className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-200 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-100 sm:min-h-0 sm:px-5"
                         >
                           {work.primaryLabel === 'GitHub' ? <Github size={18} /> : <ExternalLink size={18} />}
                           {work.primaryLabel}
@@ -469,15 +469,15 @@ export function Overlay() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="pointer-events-auto z-10 w-full max-w-4xl rounded-2xl border border-white/15 bg-black/65 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.5rem] sm:p-10 md:rounded-[3rem] md:p-16 lg:p-20"
+          className="pointer-events-auto z-10 w-full max-w-4xl rounded-2xl border border-white/5 bg-black/30 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.5rem] sm:p-10 md:rounded-[3rem] md:p-16 lg:p-20"
         >
-          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-300 sm:mb-4 sm:text-xs">
+          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-400 sm:mb-4 sm:text-xs">
             GET IN TOUCH
           </h2>
-          <h3 className="mb-6 bg-gradient-to-b from-white via-white to-neutral-200 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl">
+          <h3 className="mb-6 bg-gradient-to-b from-white via-white to-neutral-500 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl">
             Let&apos;s build <br className="hidden sm:block" /> together.
           </h3>
-          <p className="mx-auto mb-10 max-w-2xl px-1 text-base font-normal leading-relaxed text-neutral-100 sm:mb-12 sm:text-lg md:text-2xl">
+          <p className="mx-auto mb-10 max-w-2xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-2xl">
             Currently open for new opportunities. Whether you have a project in mind or just want to say hello, my inbox is always open.
           </p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-5 md:gap-8">
@@ -527,12 +527,12 @@ export function Overlay() {
       </section>
 
       {/* Footer */}
-      <footer className="w-full py-5 border-t border-white/10 bg-black/70 backdrop-blur-md pointer-events-auto">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-xs font-normal tracking-wide text-neutral-300 sm:flex-row sm:gap-6 sm:px-6 sm:text-sm md:px-12">
+      <footer className="w-full py-5 border-t border-white/5 bg-black/50 backdrop-blur-md pointer-events-auto">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-xs font-light tracking-wide text-neutral-600 sm:flex-row sm:gap-6 sm:px-6 sm:text-sm md:px-12">
           <p className="text-center md:text-left order-2 md:order-1">
             Made with ❤️ © {new Date().getFullYear()} {LEGAL_NAME}.
           </p>
-          <div className="relative grid aspect-square w-full max-w-[min(100%,44px)] shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-md border border-white/15 bg-black/60 p-1 backdrop-blur-sm [&>*]:min-h-0 [&>*]:min-w-0 order-1 md:order-2 md:shrink-0">
+          <div className="relative grid aspect-square w-full max-w-[min(100%,44px)] shrink-0 grid-cols-1 grid-rows-1 overflow-hidden rounded-md border border-white/10 bg-black/20 p-1 backdrop-blur-sm [&>*]:min-h-0 [&>*]:min-w-0 order-1 md:order-2 md:shrink-0">
             <HeroMonogram compact />
           </div>
         </div>
