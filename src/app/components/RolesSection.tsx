@@ -57,10 +57,10 @@ function RoleCard({
           {num}
         </span>
         <div className="relative z-[1]">
-          <h3 className="mb-3 break-words pr-10 text-lg font-bold text-violet-300 sm:pr-14 sm:text-xl md:pr-20 md:text-2xl">
+          <h3 className="mb-3 break-words pr-10 text-lg font-bold text-violet-200 sm:pr-14 sm:text-xl md:pr-20 md:text-2xl">
             {role.title}
           </h3>
-          <p className="max-w-prose text-base leading-relaxed text-violet-100/90 sm:text-lg">{role.description}</p>
+          <p className="max-w-prose text-base leading-relaxed text-white sm:text-lg">{role.description}</p>
         </div>
       </div>
     </motion.article>
@@ -82,8 +82,8 @@ export function RolesSection() {
         transition={{ duration: 0.5 }}
         className="pointer-events-auto text-center"
       >
-        <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Roles</h2>
-        <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-xl">
+        <h2 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl">Roles</h2>
+        <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-normal leading-relaxed text-white sm:mb-12 sm:text-lg md:text-xl">
           Leadership positions and contributions to events and societies.
         </p>
       </motion.div>
@@ -109,7 +109,7 @@ export function RolesSection() {
                   )}
                 </div>
                 <div
-                  className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center justify-self-center rounded-full border-2 border-violet-500 bg-[#0a0a0a] text-sm font-bold text-violet-400 shadow-[0_0_20px_rgba(168,85,247,0.3)] md:h-16 md:w-16 md:text-base"
+                  className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center justify-self-center rounded-full border-2 border-violet-500 bg-[#0a0a0a] text-sm font-bold text-violet-200 shadow-[0_0_20px_rgba(168,85,247,0.3)] md:h-16 md:w-16 md:text-base"
                   aria-hidden
                 >
                   {index + 1}
@@ -135,7 +135,7 @@ export function RolesSection() {
           {ROLES.map((role, index) => (
             <li key={role.title} className="relative flex min-w-0 gap-4 pl-12 sm:gap-5 sm:pl-14">
               <div
-                className="absolute left-0 top-6 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-violet-500 bg-[#0a0a0a] text-sm font-bold text-violet-400 sm:h-12 sm:w-12 sm:text-base"
+                className="absolute left-0 top-6 z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-violet-500 bg-[#0a0a0a] text-sm font-bold text-violet-200 sm:h-12 sm:w-12 sm:text-base"
                 aria-hidden
               >
                 {index + 1}

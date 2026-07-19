@@ -58,8 +58,8 @@ export function Experience() {
         className="pointer-events-auto w-full"
       >
         <div className="mb-10 text-center sm:mb-12">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Experience</h2>
-          <p className="mx-auto max-w-3xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:text-lg md:text-xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl">Experience</h2>
+          <p className="mx-auto max-w-3xl px-1 text-base font-normal leading-relaxed text-white sm:text-lg md:text-xl">
             Internships and roles where I&apos;ve built products and grown as a developer.
           </p>
         </div>
@@ -108,26 +108,26 @@ export function Experience() {
                     <div className="min-w-0 flex-1">
                       <h3
                         className={`text-balance tracking-tight transition-[font-size,font-weight,color] duration-300 ease-out ${open
-                          ? 'text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 sm:text-2xl md:text-3xl'
+                          ? 'text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-200 to-indigo-300 sm:text-2xl md:text-3xl'
                           : 'text-lg font-bold text-white md:text-xl'
                           }`}
                       >
                         {headline}
                       </h3>
                       {!open && (
-                        <p className="mt-1 text-sm font-medium text-indigo-400/90">{item.period}</p>
+                        <p className="mt-1 text-sm font-medium text-indigo-200">{item.period}</p>
                       )}
                       {!open && (
-                        <p className="mt-0.5 text-xs text-neutral-500 md:text-sm">{item.location}</p>
+                        <p className="mt-0.5 text-xs text-white md:text-sm">{item.location}</p>
                       )}
                       {!open && (
-                        <p className="mt-2 text-sm text-neutral-500 font-light">Click to view details</p>
+                        <p className="mt-2 text-sm text-white font-normal">Click to view details</p>
                       )}
                     </div>
                     <motion.span
                       animate={{ rotate: open ? 180 : 0 }}
                       transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-                      className={`inline-flex shrink-0 ${open ? 'text-indigo-400' : 'text-neutral-500'}`}
+                      className={`inline-flex shrink-0 ${open ? 'text-indigo-200' : 'text-white'}`}
                       aria-hidden
                     >
                       <ChevronDown size={22} />
@@ -148,13 +148,13 @@ export function Experience() {
                       >
                         <motion.p
                           variants={expDetailItemVariants}
-                          className="text-sm font-medium tracking-wide text-indigo-400 md:text-base"
+                          className="text-sm font-medium tracking-wide text-indigo-200 md:text-base"
                         >
                           {item.period}
                         </motion.p>
                         <motion.p
                           variants={expDetailItemVariants}
-                          className="mt-1 text-xs text-neutral-500 md:text-sm"
+                          className="mt-1 text-xs text-white md:text-sm"
                         >
                           {item.location}
                         </motion.p>
@@ -163,7 +163,7 @@ export function Experience() {
                             <motion.p
                               key={bi}
                               variants={expDetailItemVariants}
-                              className="relative pl-5 text-[15px] font-light leading-relaxed text-neutral-300 md:text-base before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-cyan-500/70"
+                              className="relative pl-5 text-[15px] font-normal leading-relaxed text-white md:text-base before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-cyan-500/70"
                             >
                               {line}
                             </motion.p>

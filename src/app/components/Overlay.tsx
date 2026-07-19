@@ -4,6 +4,7 @@ import { useLenis } from 'lenis/react'
 import { HeroMonogram } from './HeroMonogram'
 import { Experience } from './Experience'
 import { RolesSection } from './RolesSection'
+import { Certifications } from './Certifications'
 import { TypeAnimation } from 'react-type-animation'
 import React, { useState, useEffect } from 'react'
 import { WORKS } from '../../data/works'
@@ -109,6 +110,7 @@ export function Overlay() {
     { name: "Experience", href: "#experience" },
     { name: "Projects", href: "#projects" },
     { name: "Roles", href: "#roles" },
+    { name: "Certifications", href: "#certifications" },
     { name: "Contact", href: "#contact" }
   ]
 
@@ -144,7 +146,7 @@ export function Overlay() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:px-12">
           <a href="#hero" onClick={(e) => handleNavClick(e, '#hero')} className="text-lg font-bold tracking-tighter text-white sm:text-xl md:text-xl">
-            MS<span className="text-indigo-500">.</span>
+            MS<span className="text-indigo-300">.</span>
           </a>
 
           <div className="flex items-center gap-8">
@@ -153,7 +155,7 @@ export function Overlay() {
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="text-sm font-medium text-neutral-400 transition-colors hover:text-white"
+                className="text-sm font-medium text-white transition-colors hover:text-white"
               >
                 {link.name}
               </a>
@@ -175,26 +177,30 @@ export function Overlay() {
         >
           <div className="flex w-full min-w-0 max-w-lg flex-1 flex-col items-stretch px-0 sm:max-w-xl sm:items-center md:max-w-none md:items-start md:px-0">
             <div className="relative w-full min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-black/20 p-3 backdrop-blur-sm sm:p-4 md:rounded-3xl md:p-6 [&>*]:min-h-0 [&>*]:min-w-0">
-              <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-400 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base">
+              <p className="mb-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-indigo-300 sm:mb-4 sm:text-xs sm:tracking-widest md:text-left md:text-base">
                 Hi, my name is
               </p>
               <h1 className="mb-3 text-center text-4xl font-bold uppercase leading-[1.06] tracking-tighter sm:mb-4 sm:text-5xl md:text-left md:text-7xl lg:text-8xl">
-                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">MOKSH</span>
-                <span className="block bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent drop-shadow-sm">{' '}SHARMA</span>
+                <span className="block bg-gradient-to-b from-white via-white to-white bg-clip-text text-transparent drop-shadow-sm">MOKSH</span>
+                <span className="block bg-gradient-to-b from-white via-white to-white bg-clip-text text-transparent drop-shadow-sm">{' '}SHARMA</span>
               </h1>
-              <h2 className="mb-5 min-h-[48px] text-center text-2xl font-bold text-neutral-500 sm:mb-6 sm:min-h-[52px] sm:text-3xl md:min-h-[80px] md:text-left md:text-5xl lg:text-6xl">
+              <h2 className="mb-5 flex min-h-[1.35em] items-center justify-center overflow-x-auto text-center text-[clamp(1.15rem,4.2vw,1.75rem)] font-bold leading-none tracking-tight text-white sm:mb-6 sm:text-[clamp(1.35rem,3.5vw,2rem)] md:justify-start md:overflow-visible md:text-[clamp(1.75rem,2.8vw,2.75rem)] lg:text-[clamp(2rem,2.6vw,3.25rem)]">
                 <TypeAnimation
                   sequence={[
                     'Data Analysis', 2200,
                     'Web Development', 2200,
+                    'GenAI Engineering', 2200,
+                    'Full Stack Development', 2200,
+                    'Machine Learning', 2200,
+                    'RAG Systems', 2200,
                   ]}
                   wrapper="span"
                   speed={50}
-                  className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400"
+                  className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-cyan-200 to-indigo-300"
                   repeat={Infinity}
                 />
               </h2>
-              <p className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-light leading-[1.65] text-neutral-400 sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl">
+              <p className="mx-auto mb-8 w-full max-w-[min(100%,22rem)] text-pretty text-center text-[15px] font-normal leading-[1.65] text-white sm:mb-10 sm:max-w-none sm:text-lg md:mx-0 md:mb-10 md:text-left md:text-xl">
                 I build interactive 3D experiences, scalable web applications, and intuitive user interfaces that live on the modern web.
               </p>
               <div className="mx-auto flex w-full max-w-md flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center md:mx-0 md:max-w-none md:justify-start md:gap-6">
@@ -208,7 +214,7 @@ export function Overlay() {
                 <a
                   href="#contact"
                   onClick={(e) => handleNavClick(e, '#contact')}
-                  className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/20 px-5 py-3 text-center text-sm font-semibold backdrop-blur-sm transition-all hover:bg-white/10 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1"
+                  className="min-h-[3rem] w-full touch-manipulation rounded-full border border-white/40 px-5 py-3 text-center text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/10 active:scale-[0.98] sm:min-h-0 sm:w-auto sm:px-8 sm:py-4 sm:text-base md:hover:-translate-y-1"
                 >
                   Contact Me
                 </a>
@@ -224,10 +230,10 @@ export function Overlay() {
         </motion.div>
 
         {/* Marquee Banner */}
-        <div className="pointer-events-none absolute bottom-28 left-[-50%] z-0 w-[200%] overflow-hidden opacity-[0.12] sm:bottom-24 sm:opacity-25 md:bottom-28 md:opacity-30">
+        <div className="pointer-events-none absolute bottom-28 left-[-50%] z-0 w-[200%] overflow-hidden opacity-25 sm:bottom-24 sm:opacity-40 md:bottom-28 md:opacity-45">
           <div
             className="flex w-max animate-[marquee_100s_linear_infinite] whitespace-nowrap font-black text-5xl tracking-tighter text-transparent sm:text-7xl md:text-[10rem]"
-            style={{ WebkitTextStroke: '1px rgba(255,255,255,0.5)' }}
+            style={{ WebkitTextStroke: '1px rgba(255,255,255,0.85)' }}
           >
             <span className="inline-block shrink-0 pr-16">{TECH_BELT_MARQUEE}</span>
             <span className="inline-block shrink-0 pr-16">{TECH_BELT_MARQUEE}</span>
@@ -236,7 +242,7 @@ export function Overlay() {
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
+          animate={{ opacity: 0.95 }}
           transition={{ duration: 1, delay: 1.5 }}
           className="absolute bottom-[max(1.25rem,env(safe-area-inset-bottom,0px)+0.5rem)] left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-1.5 animate-bounce motion-reduce:animate-none motion-reduce:opacity-70 sm:bottom-10 sm:gap-2"
         >
@@ -262,7 +268,7 @@ export function Overlay() {
           </h2>
 
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center md:gap-10">
-            <div className="flex-1 text-base font-light leading-relaxed text-neutral-300 sm:text-lg">
+            <div className="flex-1 text-base font-normal leading-relaxed text-white sm:text-lg">
               <p>
                 GenAI and Full Stack Developer with experience in building{' '}
                 <strong className="text-white font-medium">AI-powered applications</strong> and{' '}
@@ -279,7 +285,7 @@ export function Overlay() {
                     key={tab}
                     type="button"
                     onClick={() => setActiveTab(tab)}
-                    className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-400' : 'text-neutral-500 hover:text-neutral-300'}`}
+                    className={`relative flex-1 touch-manipulation py-3 text-sm font-medium transition-colors sm:flex-none sm:px-6 md:text-base ${activeTab === tab ? 'text-indigo-300' : 'text-neutral-50 hover:text-white'}`}
                   >
                     {tab}
                     {activeTab === tab && (
@@ -301,7 +307,7 @@ export function Overlay() {
                         key={skill}
                         className="flex min-h-0 flex-col items-center justify-center gap-1 rounded-xl border border-white/5 bg-white/5 p-2 text-center sm:flex-row sm:items-center sm:justify-start sm:gap-2 sm:p-3 sm:text-left"
                       >
-                        <Code className="size-3.5 shrink-0 text-indigo-400 sm:size-4" />
+                        <Code className="size-3.5 shrink-0 text-indigo-300 sm:size-4" />
                         <span className="max-w-full break-words leading-snug sm:min-w-0">{skill}</span>
                       </div>
                     ))}
@@ -310,25 +316,25 @@ export function Overlay() {
                 {activeTab === 'Education' && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5 sm:space-y-6">
                     <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-400 sm:p-3">
+                      <div className="flex shrink-0 self-start rounded-xl bg-indigo-500/20 p-2.5 text-indigo-300 sm:p-3">
                         <GraduationCap className="size-5 sm:size-6" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-balance text-lg font-bold text-white sm:text-xl">
                           B.Tech, Computer Science Engineering
                         </h4>
-                        <p className="mt-1 text-xs leading-snug text-indigo-400 sm:text-sm">
+                        <p className="mt-1 text-xs leading-snug text-indigo-300 sm:text-sm">
                           Bennett University, Times Group, Greater Noida • Aug 2023 – Aug 2027
                         </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex shrink-0 self-start rounded-xl bg-white/5 p-2.5 text-neutral-400 sm:p-3">
+                      <div className="flex shrink-0 self-start rounded-xl bg-white/5 p-2.5 text-white sm:p-3">
                         <GraduationCap className="size-5 sm:size-6" aria-hidden />
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-balance text-lg font-bold text-white sm:text-xl">Class XII & Class X, CBSE</h4>
-                        <p className="mt-1 text-xs leading-snug text-neutral-500 sm:text-sm">
+                        <p className="mt-1 text-xs leading-snug text-neutral-50 sm:text-sm">
                           DAV Public School, Sector 49, Gurgaon • Apr 2010 – Apr 2023
                         </p>
                       </div>
@@ -355,8 +361,8 @@ export function Overlay() {
           transition={{ duration: 0.6 }}
           className="pointer-events-auto text-center"
         >
-          <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-6xl">Latest Works</h2>
-          <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-xl">
+          <h2 className="mb-4 text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl">Latest Works</h2>
+          <p className="mx-auto mb-10 max-w-3xl px-1 text-base font-normal leading-relaxed text-white sm:mb-12 sm:text-lg md:text-xl">
             A selection of projects spanning data tools, web apps, and full-stack development. Click a project to see details.
           </p>
         </motion.div>
@@ -384,20 +390,20 @@ export function Overlay() {
                   <div className="min-w-0 flex-1">
                     <h3
                       className={`text-balance tracking-tight transition-[font-size,font-weight,color] duration-300 ease-out ${open
-                        ? 'bg-gradient-to-r from-indigo-400 via-cyan-400 to-indigo-400 bg-clip-text text-xl font-black text-transparent sm:text-2xl md:text-3xl lg:text-4xl'
+                        ? 'bg-gradient-to-r from-indigo-300 via-cyan-200 to-indigo-300 bg-clip-text text-xl font-black text-transparent sm:text-2xl md:text-3xl lg:text-4xl'
                         : 'text-lg font-bold text-white sm:text-xl md:text-2xl'
                         }`}
                     >
                       {work.title}
                     </h3>
                     {!open && (
-                      <p className="mt-2 text-sm text-neutral-500 font-light">Click to view details</p>
+                      <p className="mt-2 text-sm text-white font-normal">Click to view details</p>
                     )}
                   </div>
                   <motion.span
                     animate={{ rotate: open ? 180 : 0 }}
                     transition={{ type: 'spring', stiffness: 260, damping: 22 }}
-                    className={`inline-flex shrink-0 ${open ? 'text-indigo-400' : 'text-neutral-500'}`}
+                    className={`inline-flex shrink-0 ${open ? 'text-indigo-300' : 'text-neutral-50'}`}
                     aria-hidden
                   >
                     <ChevronDown size={22} />
@@ -416,36 +422,52 @@ export function Overlay() {
                       animate={open ? 'visible' : 'hidden'}
                       className={`border-t border-white/10 px-4 pb-5 pt-2 sm:px-5 sm:pb-6 md:px-6 ${open ? '' : 'pointer-events-none'}`}
                     >
-                      <motion.p
-                        variants={workDetailItemVariants}
-                        className="text-[15px] font-light leading-relaxed text-neutral-300 sm:text-base"
-                      >
-                        {work.description}
-                      </motion.p>
+                      {work.bullets?.length ? (
+                        <div className="space-y-3">
+                          {work.bullets.map((line, bi) => (
+                            <motion.p
+                              key={`${work.id}-bullet-${bi}`}
+                              variants={workDetailItemVariants}
+                              className="relative pl-5 text-[15px] font-normal leading-relaxed text-white sm:text-base before:absolute before:left-0 before:top-[0.55em] before:h-1.5 before:w-1.5 before:rounded-full before:bg-cyan-400"
+                            >
+                              {line}
+                            </motion.p>
+                          ))}
+                        </div>
+                      ) : (
+                        <motion.p
+                          variants={workDetailItemVariants}
+                          className="text-[15px] font-normal leading-relaxed text-white sm:text-base"
+                        >
+                          {work.description}
+                        </motion.p>
+                      )}
                       <motion.div variants={workDetailTagRowVariants} className="mt-5 flex flex-wrap gap-2">
                         {work.tags.map((tag, ti) => (
                           <motion.span
                             key={`${work.id}-tag-${ti}`}
                             variants={workDetailItemVariants}
-                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-neutral-300"
+                            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white"
                           >
                             {tag}
                           </motion.span>
                         ))}
                       </motion.div>
-                      <motion.div variants={workDetailItemVariants} className="mt-6">
-                        <a
-                          href={work.primaryHref}
-                          target="_blank"
-                          rel="noreferrer"
-                          tabIndex={open ? undefined : -1}
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-200 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-100 sm:min-h-0 sm:px-5"
-                        >
-                          {work.primaryLabel === 'GitHub' ? <Github size={18} /> : <ExternalLink size={18} />}
-                          {work.primaryLabel}
-                        </a>
-                      </motion.div>
+                      {work.primaryHref && work.primaryLabel && (
+                        <motion.div variants={workDetailItemVariants} className="mt-6">
+                          <a
+                            href={work.primaryHref}
+                            target="_blank"
+                            rel="noreferrer"
+                            tabIndex={open ? undefined : -1}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex min-h-11 touch-manipulation items-center gap-2 rounded-full border border-indigo-500/40 bg-indigo-500/10 px-4 py-2.5 text-sm font-semibold text-indigo-100 transition-all hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-white sm:min-h-0 sm:px-5"
+                          >
+                            {work.primaryLabel === 'GitHub' ? <Github size={18} /> : <ExternalLink size={18} />}
+                            {work.primaryLabel}
+                          </a>
+                        </motion.div>
+                      )}
                     </motion.div>
                   </div>
                 </div>
@@ -457,7 +479,7 @@ export function Overlay() {
 
       <RolesSection />
 
-      {/* Achievements section omitted for now */}
+      <Certifications />
 
       {/* Section 6: Contact */}
       <section
@@ -471,13 +493,13 @@ export function Overlay() {
           transition={{ duration: 0.8 }}
           className="pointer-events-auto z-10 w-full max-w-4xl rounded-2xl border border-white/5 bg-black/30 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.5rem] sm:p-10 md:rounded-[3rem] md:p-16 lg:p-20"
         >
-          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-400 sm:mb-4 sm:text-xs">
+          <h2 className="mb-3 text-[10px] font-semibold uppercase tracking-widest text-indigo-300 sm:mb-4 sm:text-xs">
             GET IN TOUCH
           </h2>
-          <h3 className="mb-6 bg-gradient-to-b from-white via-white to-neutral-500 bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl">
+          <h3 className="mb-6 bg-gradient-to-b from-white via-white to-white bg-clip-text text-3xl font-bold tracking-tighter text-transparent sm:mb-8 sm:text-4xl md:text-6xl lg:text-8xl">
             Let&apos;s build <br className="hidden sm:block" /> together.
           </h3>
-          <p className="mx-auto mb-10 max-w-2xl px-1 text-base font-light leading-relaxed text-neutral-400 sm:mb-12 sm:text-lg md:text-2xl">
+          <p className="mx-auto mb-10 max-w-2xl px-1 text-base font-normal leading-relaxed text-white sm:mb-12 sm:text-lg md:text-2xl">
             Currently open for new opportunities. Whether you have a project in mind or just want to say hello, my inbox is always open.
           </p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-5 md:gap-8">
@@ -528,7 +550,7 @@ export function Overlay() {
 
       {/* Footer */}
       <footer className="w-full py-5 border-t border-white/5 bg-black/50 backdrop-blur-md pointer-events-auto">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-xs font-light tracking-wide text-neutral-600 sm:flex-row sm:gap-6 sm:px-6 sm:text-sm md:px-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-xs font-normal tracking-wide text-white sm:flex-row sm:gap-6 sm:px-6 sm:text-sm md:px-12">
           <p className="text-center md:text-left order-2 md:order-1">
             Made with ❤️ © {new Date().getFullYear()} {LEGAL_NAME}.
           </p>

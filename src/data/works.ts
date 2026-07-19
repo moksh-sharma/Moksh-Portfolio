@@ -1,13 +1,101 @@
 export type PortfolioWork = {
   id: string
   title: string
-  description: string
+  /** Optional short blurb; prefer `bullets` when available. */
+  description?: string
+  bullets?: string[]
   tags: string[]
-  primaryLabel: 'GitHub' | 'Live Demo'
-  primaryHref: string
+  primaryLabel?: 'GitHub' | 'Live Demo'
+  primaryHref?: string
 }
 
 export const WORKS: PortfolioWork[] = [
+  {
+    id: 'email-intelligence',
+    title: 'Email Intelligence',
+    bullets: [
+      'Built an end-to-end email intelligence platform that ingests mail via Microsoft Graph (real-time webhooks and historical backfill), stores messages in PostgreSQL, and processes them asynchronously with Redis and Celery.',
+      'Implemented LLM classification (Ollama primary, optional OpenAI fallback) for summaries, categories, priority, suggested replies, and lead signals, plus escalation detection, sender trust, and team routing.',
+      'Shipped a FastAPI backend and Next.js operations dashboard with Azure AD sign-in for monitoring emails, queues, escalations, and admin workflows.',
+    ],
+    tags: [
+      'FastAPI',
+      'Next.js',
+      'PostgreSQL',
+      'Redis',
+      'Celery',
+      'Microsoft Graph',
+      'LLMs',
+      'Ollama',
+      'Azure AD',
+    ],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/cautiousdanger/email-intelligence/tree/emailint_vm',
+  },
+  {
+    id: 'techbank-ai',
+    title: 'TechBank.Ai',
+    bullets: [
+      'Developed an AI-powered recruitment platform using LLMs, FastAPI, and SQL to automate resume parsing and job description analysis, enabling intelligent candidate matching with explainable scoring.',
+      'Designed a unified talent management system integrating multiple data sources (uploads, email, CSV) to streamline candidate screening and improve hiring efficiency.',
+    ],
+    tags: ['LLMs', 'FastAPI', 'SQL', 'Python', 'AI'],
+  },
+  {
+    id: 'ask-my-docs',
+    title: 'Ask My Docs',
+    bullets: [
+      'Built a production-style RAG system with hybrid retrieval (BM25 + vectors via RRF), cross-encoder reranking, citation-enforced LLM answers, and a FastAPI + web UI for ingest and chat.',
+      'Added a golden-set evaluation pipeline with CI gates for Recall@k, faithfulness, and citation accuracy so quality regressions block deploy.',
+    ],
+    tags: ['RAG', 'Python', 'FastAPI', 'BM25', 'Embeddings', 'Ollama', 'GitHub Actions'],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/moksh-sharma/ask-my-docs',
+  },
+  {
+    id: 'fine-tune-lora-dpo',
+    title: 'Fine-Tuning with LoRA & DPO',
+    bullets: [
+      'Fine-tuned a small instruct model (Qwen2.5) for JSON extraction using LoRA/QLoRA supervised fine-tuning, then stacked a second LoRA adapter for DPO preference tuning toward valid JSON.',
+      'Built an end-to-end eval pipeline reporting JSON validity, keys match, field accuracy, and exact match before/after SFT and DPO on a held-out set.',
+    ],
+    tags: ['LoRA', 'DPO', 'QLoRA', 'Hugging Face', 'Python', 'SFT'],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/moksh-sharma/fine-tune-lora-dpo',
+  },
+  {
+    id: 'rag-observability',
+    title: 'RAG Observability',
+    bullets: [
+      'Added production-style observability for a hybrid RAG pipeline: OpenTelemetry tracing, per-stage p50/p95 latency, cost-per-request estimates, and quality metrics on a golden set.',
+      'Shipped CI regression gating against a checked-in baseline plus a React + FastAPI dashboard for ask, eval, and gate workflows.',
+    ],
+    tags: ['OpenTelemetry', 'RAG', 'FastAPI', 'React', 'CI', 'Python', 'Observability'],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/moksh-sharma/rag-observability',
+  },
+  {
+    id: 'local-slm-ollama',
+    title: 'Local SLM with Ollama',
+    bullets: [
+      'Built an offline small-language-model app on Ollama with chat, benchmarking, and a three-model comparison (speed + quality) so privacy, latency, and cost tradeoffs are measurable.',
+      'Measured TTFT, end-to-end latency, tokens/sec, and deterministic quality tasks, with a web UI and markdown/JSON reports for hardware-specific results.',
+    ],
+    tags: ['Ollama', 'SLM', 'Python', 'FastAPI', 'Benchmarking', 'Local AI'],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/moksh-sharma/local-slm-ollama',
+  },
+  {
+    id: 'realtime-multimodal',
+    title: 'Real-Time Multimodal Voice Assistant',
+    bullets: [
+      'Designed a streaming voice pipeline (capture/VAD → STT → LLM → TTS → playback) with explicit per-stage latency budgets and an end-to-end SLA (~2.5s stop-speaking to first audio).',
+      'Implemented graceful degradation (full voice → text-only → cached → minimal) under overruns/timeouts, plus WebSocket demo UI and Monte-carlo latency simulations.',
+    ],
+    tags: ['Real-time', 'STT', 'TTS', 'LLM', 'WebSocket', 'Python', 'FastAPI'],
+    primaryLabel: 'GitHub',
+    primaryHref: 'https://github.com/moksh-sharma/realtime-multimodal',
+  },
   {
     id: 'file-analyzer',
     title: 'File Analyzer',
@@ -36,48 +124,21 @@ export const WORKS: PortfolioWork[] = [
     primaryHref: 'https://github.com/moksh-sharma/EMS',
   },
   {
-    id: 'app-dev-landing',
-    title: 'App Development Landing Page',
-    description:
-      "From concept to deployment, I design and develop high-performing mobile and web apps tailored to your business needs. With a user-first approach, responsive design, and clean code, I ensure your app stands out in today's competitive digital landscape. This landing page translates that story into scroll-driven sections: services, process highlights, social proof, and strong calls-to-action. Typography, spacing, and Figma-aligned components work together so the page feels credible on large displays and stays legible on phones, with JavaScript used for subtle interactivity where it improves clarity rather than noise.",
-    tags: ['HTML', 'CSS', 'JavaScript', 'Figma'],
-    primaryLabel: 'GitHub',
-    primaryHref: 'https://github.com/moksh-sharma/AppDevLandingPage',
+    id: 'audio-beat-prediction',
+    title: 'Audio Analysis and Beat Prediction System',
+    bullets: [
+      'Built an AI-powered beat prediction and music generation system using Python, Librosa, and signal-processing techniques, enabling real-time audio analysis and melody synthesis.',
+      'Implemented FFT-based feature extraction, onset/beat detection, and automatic composition blending to produce complete AI-generated music tracks.',
+    ],
+    tags: ['Python', 'Librosa', 'FFT', 'Signal Processing', 'AI'],
   },
   {
-    id: 'ecommerce',
-    title: 'Ecommerce Website',
-    description:
-      'From product showcases to smooth checkout flows and responsive design, this ecommerce-focused experience shows how online stores can feel fast and trustworthy. Hero areas, product grids, and pricing cues are laid out to guide attention toward purchase decisions without overwhelming the shopper. Built with HTML, CSS, and JavaScript and refined in Figma, it demonstrates layout discipline, reusable section patterns, and mobile-first breakpoints so the storefront narrative stays coherent from first impression to cart-ready state.',
-    tags: ['HTML', 'CSS', 'JavaScript', 'Figma'],
-    primaryLabel: 'GitHub',
-    primaryHref: 'https://github.com/moksh-sharma/EComLandingPage',
-  },
-  {
-    id: 'ice-cream-shop',
-    title: 'Ice-Cream Shop',
-    description:
-      'A highly interactive ice-cream shopping site built with React for stateful menus, cart-style selections, and instant UI updates as users browse flavors and combos. Custom styling and layout in HTML and CSS support playful branding while keeping controls obvious - quantity tweaks, category browsing, and highlights for featured items. Designed in Figma first, then implemented with attention to hover states, transitions, and touch-friendly targets so the experience feels as satisfying on a phone as on desktop.',
-    tags: ['React.JS', 'HTML', 'CSS', 'JavaScript', 'Figma'],
-    primaryLabel: 'GitHub',
-    primaryHref: 'https://github.com/moksh-sharma/Ice-Cream',
-  },
-  {
-    id: 'sustainable-living',
-    title: 'Sustainable-Living-Guide',
-    description:
-      'A practical guide promoting eco-friendly habits and sustainable lifestyle choices for a greener future. Covers tips on energy conservation, waste reduction, ethical consumption, and sustainable living practices. React helps organize content into scannable sections and reusable cards so readers can jump between topics - home energy, food choices, travel, and daily habits - without losing their place. The interface pairs clear headings and short actionable copy with calm visuals from the Figma system, making education feel approachable rather than preachy.',
-    tags: ['React.JS', 'HTML', 'CSS', 'JavaScript', 'Figma'],
-    primaryLabel: 'GitHub',
-    primaryHref: 'https://github.com/moksh-sharma/Sustainable-Living-Guide',
-  },
-  {
-    id: 'netflix-clone',
-    title: 'Netflix Clone',
-    description:
-      'A fully responsive streaming platform clone inspired by Netflix, offering a sleek UI and dynamic content display. Features include user authentication, movie previews, and categorized content browsing for a seamless experience. Rows mimic Netflix-style carousels with horizontal discovery, while a bold hero banner sets context for featured titles. React structures pages and reusable media tiles; HTML and JavaScript handle routing-friendly markup and lightweight interactions; Figma-informed spacing and contrast keep text readable on dark backgrounds across breakpoints.',
-    tags: ['React.JS', 'HTML', 'JavaScript', 'Figma'],
-    primaryLabel: 'GitHub',
-    primaryHref: 'https://github.com/moksh-sharma/Netflix',
+    id: 'bi-dashboard',
+    title: 'BI Dashboard / Analytics Platform',
+    bullets: [
+      'Designed and developed a custom business intelligence dashboard to transform raw data into interactive visualizations and actionable insights using Python, SQL, and Excel-based data pipelines.',
+      'Built end-to-end data processing and visualization workflows, enabling users to upload datasets, generate dynamic dashboards, and support data-driven decision-making.',
+    ],
+    tags: ['Python', 'SQL', 'Excel', 'BI', 'Analytics'],
   },
 ]
